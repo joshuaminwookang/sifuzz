@@ -1,5 +1,4 @@
-// RoCC Bloom filter accelerator
-// Now accessing shared D$ for data transfer
+// randomly generated accelerator
 // (c) 2019 Josh Kang 
 
 // Current version hard-codes the BF, m = 20,000 and k = 5
