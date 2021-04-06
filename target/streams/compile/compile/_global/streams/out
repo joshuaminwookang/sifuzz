@@ -1,0 +1,7 @@
+[0m[[0m[31merror[0m] [0m[0m/home/aa/users/cs199-aas/randomaccels/src/main/scala/ChiselWrapper.scala:10:62: not found: value IntParam[0m
+[0m[[0m[31merror[0m] [0m[0mclass RandomBlackBox(val n: Int) extends BlackBox(Map("N" -> IntParam(n))) with HasBlackBoxResource {[0m
+[0m[[0m[31merror[0m] [0m[0m                                                             ^[0m
+[0m[[0m[31merror[0m] [0m[0m/home/aa/users/cs199-aas/randomaccels/src/main/scala/ChiselWrapper.scala:28:17: value out is not a member of RandomBlackBox[0m
+[0m[[0m[31merror[0m] [0m[0m   io.out := BB.out[0m
+[0m[[0m[31merror[0m] [0m[0m                ^[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
