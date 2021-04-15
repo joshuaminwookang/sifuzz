@@ -31,11 +31,13 @@ def assign_widths_to_outedges(vertex):
         set_channel_width(edges[-1], lastedge_width)
 
 def scale_output_from_input(vertex):
-    if (vertex["unit"].i < vertex.outdegree()):
-        vertex["unit"].o = 2*vertex["unit"].i
-    elif (vertex["unit"].i < 2*vertex.outdegree()):
-        vertex["unit"].o = 2*vertex["unit"].i
-    elif (vertex["unit"].i < 6*vertex.outdegree()):
-        vertex["unit"].o = 2*vertex["unit"].i
-    else:
-        vertex["unit"].o = vertex["unit"].i
+    # for simplicity, set output = input width
+    vertex["unit"].o = vertex["unit"].i
+    # if (vertex["unit"].i < vertex.outdegree()):
+    #     vertex["unit"].o = 2*vertex["unit"].i
+    # elif (vertex["unit"].i < 2*vertex.outdegree()):
+    #     vertex["unit"].o = 2*vertex["unit"].i
+    # elif (vertex["unit"].i < 6*vertex.outdegree()):
+    #     vertex["unit"].o = 2*vertex["unit"].i
+    # else:
+    #     vertex["unit"].o = vertex["unit"].i

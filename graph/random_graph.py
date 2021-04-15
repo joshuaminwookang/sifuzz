@@ -5,23 +5,30 @@ from Units import *
 from graph_helpers import *
 
 N = 30
-red   = (1,0,0,1)
-green = (0,1,0,1)
-blue  = (0,.3,.6,.5)
+red   = (1,.5,.5,1)
+green = (.5,1,.5,1)
+blue  = (.5,.8,1,1)
+yellow = (1,1,.5,1)
 
 # generate random DAC
 #   loop until DAG successfully generated (always happens on first try for me)
 #   do this because feedback_arc_set() uses a heuristic, so it might fail with complex graph
 while True:
-    g = igraph.Graph.Erdos_Renyi(n=N, p=0.05,directed=True,loops=False)
+    g = igraph.Graph.Erdos_Renyi(n=N, p=0.03,directed=True,loops=False)
     extra_edges = g.feedback_arc_set()
     g.delete_edges(extra_edges)
+    # only keep largest connected graph (remove unconnected vertices/edges)
+    g = g.clusters(mode='weak').giant()
     if g.is_dag():
         print('Random DAG created!')
         break
 # simpler method:
 # g = igraph.Graph.Erdos_Renyi(n=N, p=0.05,directed=True,loops=False)
 # g.simplify() # remove multiedges and loops
+# layout =largest.layout("fr")
+# igraph.plot(largest,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
+
+
 
 # delete unconnected vertices
 for v in g.vs:
@@ -57,7 +64,7 @@ for edge in g.es:
 inputs = []
 outputs = []
 for vertex in g.vs:
-    vertex['color'] = blue
+    vertex['color'] = yellow
     if vertex.indegree() == 0:
         # vertex['color'] = blue
         inputs.append(vertex)
