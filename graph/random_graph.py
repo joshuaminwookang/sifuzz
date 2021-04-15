@@ -28,59 +28,29 @@ while True:
 # layout =largest.layout("fr")
 # igraph.plot(largest,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
 
-
-
-# delete unconnected vertices
-for v in g.vs:
-    if v.degree() == 0:
-        g.delete_vertices(v.index)
-
-# iterate over vertices and initialize compute units
-for vertex in g.vs:
-    vertex["unit"] = Compute(i=0,o=0)
-    vertex["label"] = vertex.index
-
 # iterate over edges and create channel object
 for edge in g.es:
     edge["unit"] = Channel(width=0)
-    # width = edge["unit"].width
-    # g.vs[edge.source]["unit"].o += width
-    # g.vs[edge.target]["unit"].i += width
-    # edge["label"] = str(width)
 
-# plot graph
-
-# igraph.plot(g,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
-
-# i = g.community_infomap()
-# print('i')
-# print(i) 
-# print('membership')
-# print(i.membership)
-# pal = igraph.drawing.colors.ClusterColoringPalette(len(i))
-# g.vs['color'] = pal.get_many(i.membership)
-# igraph.plot(g,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
-
+# iterate over vertices
+# initialize all "unit" attributes as Compute objects
+# store input and output vertices (for later)
 inputs = []
 outputs = []
 for vertex in g.vs:
-    vertex['color'] = yellow
+    vertex["unit"] = Compute(i=0,o=0)
+    # for debugging, label all vertices with their index
+    # vertex["label"] = vertex.index
+    vertex["color"] = yellow
     if vertex.indegree() == 0:
-        # vertex['color'] = blue
         inputs.append(vertex)
     if vertex.outdegree() == 0:
-        # vertex['color'] = red
         outputs.append(vertex)
-# maxlen = 0
-# bfs_paths = []
-# for i in inputs:
-#     [vertices, parents] = g.bfs(inputs[0].index)
-#     bfs_paths.append(vertices)
 
-# do breadth-first search
-# start with arbitrary input node (found above)
-
-
+# iterate over input vertices
+# randomly initialize input channel width
+# from these inputs, do Breadth-First Search (BFS)
+#   to assign output channel widths based on input widths
 for input in inputs:
     in_width = 2*randint(10,20)
     input["unit"].i = in_width
@@ -90,12 +60,17 @@ for input in inputs:
     [v_idxs, layers, parents] = g.bfs(input.index) 
     for v_idx in v_idxs[1:]:
         vertex = g.vs[v_idx]
-        # set input width of unit to sum of widths of incoming edges
         in_width = set_and_get_input_width(vertex)
         scale_output_from_input(vertex)
         assign_widths_to_outedges(vertex)
+print("Widths assigned to all channels.")
 
 # add graph vertices that are input channels to graph
+# and do the same for outputs
+# inputs - green
+# outputs - red
+# labels of input/output vertices/edges denote channel width of that input
+# each {input,output} verted+edge point to same Channel object
 for input in inputs:
     g.add_vertex()
     new_vertex = g.vs[len(g.vs)-1]
@@ -107,8 +82,6 @@ for input in inputs:
     set_channel_width(new_edge, input["unit"].i)
     new_vertex["label"] = str(input["unit"].i)
     new_vertex["color"] = green
-
-# add graph vertices that are output channels to graph
 for output in outputs:
     g.add_vertex()
     new_vertex = g.vs[len(g.vs)-1]
@@ -120,7 +93,9 @@ for output in outputs:
     set_channel_width(new_edge, output["unit"].o)
     new_vertex["label"] = str(output["unit"].o)
     new_vertex["color"] = red
+print("Input (green) and Output (red) Channel objects added.")
 
+# display results!
 layout = g.layout("fr")
 igraph.plot(g,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
 

@@ -3,7 +3,7 @@ from math import floor
 import igraph
 from Units import *
 
-
+# set input width of unit to sum of widths of incoming edges
 def set_and_get_input_width(vertex):
     edges = vertex.in_edges()
     width = 0
@@ -30,9 +30,11 @@ def assign_widths_to_outedges(vertex):
         lastedge_width = out_width - out_width_peredge*(num_edges-1)
         set_channel_width(edges[-1], lastedge_width)
 
+# currently for simplicity, set output = input width
 def scale_output_from_input(vertex):
-    # for simplicity, set output = input width
     vertex["unit"].o = vertex["unit"].i
+    # TODO: implement some scheme to decide when output width is 2x input
+    # (perhaps when input width falls below a certain threshold)
     # if (vertex["unit"].i < vertex.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
     # elif (vertex["unit"].i < 2*vertex.outdegree()):
