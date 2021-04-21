@@ -1,4 +1,4 @@
 .PHONY: clean
 
 clean: 
-	rm *.v *.json *.f
+	rm *.v *.json *.fir
