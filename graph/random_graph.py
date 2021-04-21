@@ -4,11 +4,16 @@ import igraph
 from Units import *
 from graph_helpers import *
 
-N = 30
+N = 20  # number of graph nodes
+M = 2  # number of memory units
 red   = (1,.5,.5,1)
 green = (.5,1,.5,1)
 blue  = (.5,.8,1,1)
 yellow = (1,1,.5,1)
+
+# allowed igraph shapes:
+# [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
+# [6] "vrectangle" "none"
 
 # generate random DAC
 #   loop until DAG successfully generated (always happens on first try for me)
@@ -52,7 +57,7 @@ for vertex in g.vs:
 # from these inputs, do Breadth-First Search (BFS)
 #   to assign output channel widths based on input widths
 for input in inputs:
-    in_width = 2*randint(10,20)
+    in_width = 2*randint(4,8)
     input["unit"].i = in_width
     input["unit"].o = in_width
     # input["label"] = str(in_width)
@@ -60,10 +65,22 @@ for input in inputs:
     [v_idxs, layers, parents] = g.bfs(input.index) 
     for v_idx in v_idxs[1:]:
         vertex = g.vs[v_idx]
-        in_width = set_and_get_input_width(vertex)
+        set_and_get_input_width(vertex)
         scale_output_from_input(vertex)
         assign_widths_to_outedges(vertex)
 print("Widths assigned to all channels.")
+
+# Randomly assign memory units to M compute units
+# for now, assume each memory is single-ported
+for i in range(M):
+    while True:
+        m = randint(0,len(g.vs)-1)
+        vertex = g.vs[m]
+        if not vertex["unit"].connected_to_mem:
+            break
+    connect_memory_unit(g, vertex)
+
+print("Memory units (blue) added.")
 
 # add graph vertices that are input channels to graph
 # and do the same for outputs
@@ -76,10 +93,8 @@ for input in inputs:
     new_vertex = g.vs[len(g.vs)-1]
     g.add_edges([(new_vertex.index,input.index)])
     new_edge = g.es[len(g.es)-1]
-    # set new vertex and edge to point to same Channel object
-    new_vertex["unit"] = Channel()
-    new_edge["unit"] = new_vertex["unit"]
     set_channel_width(new_edge, input["unit"].i)
+    new_vertex["unit"] = new_edge["unit"] # set new vertex and edge to point to same Channel object
     new_vertex["label"] = str(input["unit"].i)
     new_vertex["color"] = green
 for output in outputs:
@@ -87,15 +102,13 @@ for output in outputs:
     new_vertex = g.vs[len(g.vs)-1]
     g.add_edges([(output.index,new_vertex.index)])
     new_edge = g.es[len(g.es)-1]
-    # set new vertex and edge to point to same Channel object
-    new_vertex["unit"] = Channel()
-    new_edge["unit"] = new_vertex["unit"]
     set_channel_width(new_edge, output["unit"].o)
+    new_vertex["unit"] = new_edge["unit"] # set new vertex and edge to point to same Channel object
     new_vertex["label"] = str(output["unit"].o)
     new_vertex["color"] = red
 print("Input (green) and Output (red) Channel objects added.")
 
 # display results!
 layout = g.layout("fr")
-igraph.plot(g,layout=layout,bbox=(1000,1000),margin=100,autocurve=False)
+igraph.plot(g,layout=layout,bbox=(1000,1000),margin=10)#,autocurve=False)
 
