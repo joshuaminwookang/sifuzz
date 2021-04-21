@@ -8,8 +8,11 @@ green = (.5,1,.5,1)
 blue  = (.5,.8,1,1)
 yellow = (1,1,.5,1)
 
+def message(msg):
+    print("> "+str(msg))
+
 # set input width of unit to sum of widths of incoming edges
-def set_and_get_input_width(vertex):
+def update_vertex_input_width(vertex):
     edges = vertex.in_edges()
     width = 0
     for edge in edges:
@@ -25,26 +28,23 @@ def set_channel_width(obj, width):
         obj["unit"].set_width(width)
     obj["label"] = str(width)+'/ '
 
-def connect_memory_unit(g, compute_vertex):
+def connect_memory_unit(g, vertex_read, vertex_write):
     g.add_vertex()
     memory_vertex = g.vs[len(g.vs)-1]
-    # for now, set memory data width to minimum of compute unit's input/output widths
-    datawidth = min(compute_vertex["unit"].i, compute_vertex["unit"].o)
+    # for now, set memory data width to minimum of compute units' input/output widths
+    datawidth = min(vertex_read["unit"].i, vertex_write["unit"].o)
     # set memory address width to random constrained value
-    addrwidth = randint(1,10)
+    # can't exceed vertices' output widths, since this specifies mem address
+    addrwidth = min(randint(1,10), vertex_read["unit"].o, vertex_write["unit"].o)
     memory_vertex["unit"] = Memory(datawidth=datawidth,addrwidth=addrwidth)
-
-    # memory --> compute
-    g.add_edges([(memory_vertex.index,compute_vertex.index)])
-    new_edge = g.es[len(g.es)-1]
-    set_channel_width(new_edge,memory_vertex["unit"].o)
-    print("mem out: "+str(memory_vertex["unit"].o))
-
-    # compute --> memory
-    g.add_edges([(compute_vertex.index,memory_vertex.index)])
+    
+    g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory
+    g.add_edges([(vertex_read.index,memory_vertex.index)])  # memory        --> vertex_read
+    g.add_edges([(vertex_write.index,memory_vertex.index)]) # vertex_write  --> memory
+    g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory
     new_edge = g.es[len(g.es)-1]
     set_channel_width(new_edge,memory_vertex["unit"].i)
-    print("mem in: "+str(memory_vertex["unit"].i))
+    # print("mem in: "+str(memory_vertex["unit"].i))
 
     # add memory channel to compute unit's input
     compute_vertex["unit"].i += memory_vertex["unit"].o
@@ -61,16 +61,17 @@ def connect_memory_unit(g, compute_vertex):
 
 
 
-# assume vertex["unit"] is in class Unit with self.i set to a value
+# assume vertex["unit"] is in class Unit with vertex["unit"].o set to a value
+# iterate over vertex's outgoing edges and divide output width evenly among them
 def assign_widths_to_outedges(vertex):
     edges = vertex.out_edges()
-    num_edges = len(edges)
+    num_edges = vertex.outdegree()
     if num_edges > 0:
         out_width = vertex["unit"].o
         out_width_peredge = floor(out_width/num_edges)
         for idx in range(num_edges-1):
             set_channel_width(edges[idx],out_width_peredge)
-        # remaining edge gets rest of signals
+        # remaining edge gets rest of bits
         lastedge_width = out_width - out_width_peredge*(num_edges-1)
         set_channel_width(edges[-1], lastedge_width)
 
@@ -87,3 +88,7 @@ def scale_output_from_input(vertex):
     #     vertex["unit"].o = 2*vertex["unit"].i
     # else:
     #     vertex["unit"].o = vertex["unit"].i
+
+def visualize_graph(graph):
+    layout = graph.layout("fr")
+    igraph.plot(graph,layout=layout,bbox=(1000,1000),margin=50,autocurve=False)

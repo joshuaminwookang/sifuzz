@@ -8,13 +8,19 @@ class UnitType(Enum):
     NETWORK = 20
     CHANNEL = 30
     MEMORY_CHANNEL = 31
+    GRAPH = 40
 
 class Unit:
-    def __init__(self,i=1,o=1,type=UnitType.COMPUTE,connected_to_mem=False):
+    def __init__(self,i=1,o=1,type=UnitType.COMPUTE):
         self.i = i
         self.o = o
         self.type = type
-        self.connected_to_mem = connected_to_mem
+        self.connected_to_mem = False
+        self.immutable_widths = False
+    def get_input_width(self):
+        return self.i
+    def get_output_width(self):
+        return self.o
     def get_type(self):
         return self.type.name
 
@@ -41,7 +47,8 @@ class Memory(Unit):
         self.addrwidth=addrwidth
         i=datawidth+addrwidth+2
         o=datawidth
-        super().__init__(i=i,o=o,type=UnitType.MEMORY,connected_to_mem=True)
+        super().__init__(i=i,o=o,type=UnitType.MEMORY)
+        self.connected_to_mem = True
 
 
 class ReadyValidInterface(Channel):
