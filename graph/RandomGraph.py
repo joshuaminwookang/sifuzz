@@ -3,6 +3,7 @@ from random import randint
 import igraph
 from Units import *
 from graph_helpers import *
+from Translate2Chisel import *
 
 M = 2  # number of memory units
 red   = (1,.5,.5,1)
@@ -103,6 +104,10 @@ class RandomGraph(Unit):
         # for vertex in g.vs:
         #     vertex["label"] = str(vertex.index) # for debugging
 
+        # check for width 0 channels
+        for edge in g.es:
+            assert(edge["unit"].width > 0)
+
         super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
         self.immutable_widths = True
         self.g = g
@@ -177,10 +182,20 @@ class RandomGraph(Unit):
 rg = RandomGraph(N=30)
 
 # Add some memory units
-rg.attach_memory_unit()
-rg.attach_memory_unit()
-rg.attach_memory_unit()
-visualize_graph(rg.g)
+# rg.attach_memory_unit()
+# rg.attach_memory_unit()
+# rg.attach_memory_unit()
+
+# visualize_graph(rg.g)
+save_graph_pdf(rg.g)
+
+# Generate Chisel code
+output_chisel_path = "../src/main/scala/RandomHardware.scala"
+write_chisel_headers(output_chisel_path)
+write_io_list(rg, output_chisel_path)
+write_edges_to_wires(rg, output_chisel_path)
+write_vertices_to_modules(rg, output_chisel_path)
+write_epilogue(rg, output_chisel_path)
 
 # # Make a vertex of the graph into a graph itself
 # vertex0 = rg.g.vs[0]
