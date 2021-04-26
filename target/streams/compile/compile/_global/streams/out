@@ -1,0 +1,12 @@
+[0m[[0m[31merror[0m] [0m[0m/home/ubuntu/randomaccels/src/main/scala/Arithmetics.scala:11:29: overloaded method value * with alternatives:[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Double)Double <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Float)Float <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Long)Long <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Int)Int <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Char)Int <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Short)Int <and>[0m
+[0m[[0m[31merror[0m] [0m[0m  (x: Byte)Int[0m
+[0m[[0m[31merror[0m] [0m[0m cannot be applied to (chisel3.internal.firrtl.Width)[0m
+[0m[[0m[31merror[0m] [0m[0m    val out  = Output(UInt(2*n.W))[0m
+[0m[[0m[31merror[0m] [0m[0m                            ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m

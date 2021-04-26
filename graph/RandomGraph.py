@@ -182,9 +182,9 @@ class RandomGraph(Unit):
 rg = RandomGraph(N=30)
 
 # Add some memory units
-# rg.attach_memory_unit()
-# rg.attach_memory_unit()
-# rg.attach_memory_unit()
+rg.attach_memory_unit()
+rg.attach_memory_unit()
+rg.attach_memory_unit()
 
 # visualize_graph(rg.g)
 save_graph_pdf(rg.g)
