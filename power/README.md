@@ -16,4 +16,5 @@ make power-par
 ```
 
 Post-PAR Reports (Voltus) are located in ~power/gcd/build/power-rundir/
+
 Post-RTL reports (Spyglass) *will* be located in ~power/gcd/spyglass/
