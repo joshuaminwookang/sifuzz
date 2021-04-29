@@ -2,9 +2,9 @@
 package randomhardware
 
 import chisel3._
-import chisel3.util.log2Ceil
+import chisel3.util._
 
-class MemResetShiftRegister(val n:Int) extends Module {
+class ResetShiftRegister(val n:Int) extends Module {
   val io = IO(new Bundle {
     val in    = Input(UInt(n.W))
     val shift = Input(Bool())
@@ -24,7 +24,7 @@ class MemResetShiftRegister(val n:Int) extends Module {
   io.out := r3
 }
 
-class MemShiftRegister(val n:Int) extends Module {
+class ShiftRegister(val n:Int) extends Module {
   val io = IO(new Bundle {
     val in  = Input(UInt(n.W))
     val out = Output(UInt(n.W))
@@ -36,7 +36,7 @@ class MemShiftRegister(val n:Int) extends Module {
   io.out := r3
 }
 
-class MemRegister(val n:Int) extends Module {
+class Register(val n:Int) extends Module {
   val io = IO(new Bundle {
     val in  = Input(UInt(n.W))
     val out = Output(UInt(n.W))
@@ -46,7 +46,7 @@ class MemRegister(val n:Int) extends Module {
 }
 
 // DEPT=5 for now adjusted from example
-class MemStack(val n: Int) extends Module {
+class Stack(val n: Int) extends Module {
   val io = IO(new Bundle {
     val in      = Input(UInt(n.W))
     val out     = Output(UInt(n.W))
@@ -57,9 +57,9 @@ class MemStack(val n: Int) extends Module {
     // val dataOut = Output(UInt(32.W))
   })
 
-  val push    = Bool(io.in(n-1))
-  val pop     = Bool(io.in(n-2))
-  val en      = Bool(io.in(n-3))
+  val push    = io.in(n-1)
+  val pop     = io.in(n-2)
+  val en      = io.in(n-3)
   val dataIn  = io.in(n-4,0)
 
   var depth:Int = 5
@@ -70,7 +70,7 @@ class MemStack(val n: Int) extends Module {
 
   when (en) {
     when(push && (sp < depth.asUInt)) {
-      stack_mem(sp) := io.dataIn
+      stack_mem(sp) := dataIn
       sp := sp + 1.U
     } .elsewhen(pop && (sp > 0.U)) {
       sp := sp - 1.U
@@ -80,5 +80,5 @@ class MemStack(val n: Int) extends Module {
     }
   }
 
-  io.out := Cat("b.000", out)
+  io.out := Cat("b000".U, out)
 }

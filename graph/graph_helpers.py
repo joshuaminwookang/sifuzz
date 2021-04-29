@@ -96,9 +96,4 @@ def visualize_graph(graph):
     layout = graph.layout("fr")
     igraph.plot(graph,layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
 
-def save_graph_pdf(graph):
-    layout = graph.layout("fr")
-    now = datetime.now()
-    dt_string = now.strftime("%d_%m_%Y_%H_%M_%S")
-    # igraph.plot(graph, "/home/ubuntu/random_graph_"+dt_string+".pdf", layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
-    igraph.plot(graph, "/home/ubuntu/random_graph.pdf", layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
+

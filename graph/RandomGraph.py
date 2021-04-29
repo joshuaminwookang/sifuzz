@@ -62,31 +62,25 @@ class RandomGraph(Unit):
         # store input and output vertices (for later)
         for vertex in g.vs:
             seed()
-            rand_val = randint(0, 4) #20% chance of getting a subgraph vertex
-            if self.hierarchy_level > 0 :
-                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))#change bounds as we implement more Unit types
-                vertex["color"] = yellow
-                if vertex.indegree() == 0:
-                    vertex["color"] = green
-                    self.inputs.append(vertex)
-                elif vertex.outdegree() == 0:
-                    vertex["color"] = red
-                    self.outputs.append(vertex)
-            else :
-                if rand_val > 0:
-                    vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))
-                    vertex["color"] = yellow
-                    if vertex.indegree() == 0:
-                        vertex["color"] = green
-                        self.inputs.append(vertex)
-                    elif vertex.outdegree() == 0:
-                        vertex["color"] = red
-                        self.outputs.append(vertex)
-                else :
-                    subgraph_vertices.append(vertex)
-                    rg = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
-                    vertex["unit"] = rg
-                    vertex["color"] = orange
+            rand_val = randint(self.hierarchy_level //2 , 4) #20% chance of getting a subgraph vertex at level 0 and 1
+            
+            vertex["color"] = yellow
+            if vertex.indegree() == 0:
+                vertex["color"] = green
+                self.inputs.append(vertex)
+            if vertex.outdegree() == 0:
+                vertex["color"] = red
+                self.outputs.append(vertex)
+
+            # NOT a subgraph
+            if rand_val > 0: 
+                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))
+            # vertex IS a subgraph
+            else : 
+                subgraph_vertices.append(vertex)
+                rg = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
+                vertex["unit"] = rg
+                vertex["color"] = orange
 
         # iterate over input vertices
         # randomly initialize input channel width
@@ -108,7 +102,27 @@ class RandomGraph(Unit):
                 update_vertex_input_width(vertex)
                 scale_output_from_input(vertex)
                 assign_widths_to_outedges(vertex)
+        for input in self.inputs:
+            in_width = 4*randint(6,10)
+            input["unit"].i = in_width
+            input["unit"].o = in_width
+            assign_widths_to_outedges(input)
+            vertex_iter = g.bfsiter(input.index)
+            [v_idxs, layers, parents] = g.bfs(input.index) 
+            # print(str(v_idxs))
+            # for v_idx in v_idxs[1:]:
+            next(vertex_iter) # advance iterator past input vertex
+            for vertex in vertex_iter:
+                # vertex = g.vs[v_idx]
+                # vertex = g.vs[v.index]
+                update_vertex_input_width(vertex)
+                scale_output_from_input(vertex)
+                assign_widths_to_outedges(vertex)
         message("Widths assigned to all channels.")
+
+        # check for width 0 channels
+        for edge in g.es:
+            assert(edge["unit"].width > 0)
 
         # inputs - green
         # outputs - red
@@ -129,19 +143,16 @@ class RandomGraph(Unit):
         # for vertex in g.vs:
         #     vertex["label"] = str(vertex.index) # for debugging
 
-        # check for width 0 channels
-        for edge in g.es:
-            assert(edge["unit"].width > 0)
-        
         super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
         self.immutable_widths = True
         self.g = g
 
         # Subgraph generation
         for vertex in subgraph_vertices:
-            size = vertex["unit"].i//4
-            print(size)
-            vertex["unit"].build_graph(N=size)
+            rg = vertex["unit"]
+            rg.build_graph(N=rg.i//2)
+
+        self.save_graph_pdf()
 
     def get_input_width(self):
         input_width = 0
@@ -221,10 +232,18 @@ class RandomGraph(Unit):
         vertex_read["unit"].connected_to_mem = True
         vertex_write["unit"].connected_to_mem = True
 
+    def save_graph_pdf(self):
+        layout = self.g.layout("fr")
+        igraph.plot(self.g, "/home/ubuntu/random_graph_{}_{}.pdf".format(self.hierarchy_level, self.level_id), layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
 
 ## EXAMPLE USAGE
+
 rg = RandomGraph(L=0)
-rg.build_graph()
+try:
+    rg.build_graph()
+except AssertionError as error:
+    message(error)
+    # rg.build_graph()
 
 # # Add some memory units
 # rg.attach_memory_unit()
@@ -232,7 +251,7 @@ rg.build_graph()
 # rg.attach_memory_unit()
 
 # visualize_graph(rg.g)
-save_graph_pdf(rg.g)
+# save_graph_pdf(rg.g)
 
 # Generate Chisel code
 write_random_graph(rg)
