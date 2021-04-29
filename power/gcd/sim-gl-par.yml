@@ -1,0 +1,34 @@
+# Post-PAR Gate-Level Simulation Variables
+sim.inputs:
+  input_files:
+    - "src/gcd.v"
+    - "src/gcd_datapath.v"
+    - "src/gcd_control.v"
+    - "src/gcd_testbench.v"
+  input_files_meta: append
+  level: "gl"
+  timing_annotated: true
+  saif:
+    mode: "full"
+  timescale: "1ns/10ps"
+  options:
+    - "-notice"
+    - "-line"
+    - "+lint=all"
+    - "+v2k"
+    - "-debug"
+    - "+vcs+lic+wait"
+    - "+udpsched"
+    - "+neg_tchk"
+    - "+sdfverbose"
+    - "-negdelay"
+    - "+evalorder"
+  top_module: "gcd"
+  tb_name: "gcd_testbench"
+  tb_dut: "gcd"
+  defines: 
+    - "CLOCK_PERIOD=1.00"
+
+power.inputs:
+  database: "build/par-rundir/gcd_FINAL"
+  tb_name: "gcd_testbench"
