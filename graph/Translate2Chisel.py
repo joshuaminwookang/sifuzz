@@ -24,19 +24,46 @@ def write_chisel_headers(pathname, module_name):
 
 # Gather Top I/O ports for given graph
 # @params: random graph unit and path to output Chisel file
-def write_io_list(unit, pathname):
+def write_io_list(unit, pathname, level):
     g = unit.g
-    in_w = int(unit.get_input_width())
-    out_w = int(unit.get_output_width())
+    in_wire_w, out_wire_w = unit.in_wire_width,unit.out_wire_width 
+    graph_in_w, graph_out_w = int(unit.get_input_width()), int(unit.get_output_width())
+    print(graph_in_w, graph_out_w)
+
+    # for TOP level module, set the wire widths equal to each other
+    if (level==0) :
+        in_wire_w = graph_in_w
+        out_wire_w = graph_out_w
+
+    # special cases where this random graph is a I/O node in higher level graph
+    if (in_wire_w==0): in_wire_w = out_wire_w
+    if (out_wire_w==0): out_wire_w = in_wire_w
 
     chisel_file = open(pathname, "a+")
     to_write = "val io = IO(new Bundle {\n"
-    to_write += "  val in \t = Input(UInt({}.W))\n".format(in_w)
+    to_write += "  val in \t = Input(UInt({}.W))\n".format(in_wire_w)
     # watch for case where current graph is an outport of higher level graph (output_width = 0) 
-    out_w = out_w if out_w >0 else in_w
-    to_write += "  val out\t = Output(UInt({}.W))\n".format(out_w)
+    to_write += "  val out\t = Output(UInt({}.W))\n".format(out_wire_w)
     to_write += "})\n"
-    return to_write
+
+    to_write += "  val top_in = Wire(UInt({}.W))\n".format(graph_in_w)
+    to_write += "  val top_out = Wire(UInt({}.W))\n".format(graph_out_w)
+
+    if graph_in_w > in_wire_w : 
+        to_write += "  top_in := Cat(\"b{m}\".U, io.in)\n".format(m=generate_random_binary(graph_in_w-in_wire_w))
+    elif  graph_in_w < in_wire_w:
+        to_write += "  top_in := io.in({s},0)\n".format(s=graph_in_w-1)
+    else :
+        to_write += "  top_in := io.in\n"
+
+    if graph_out_w > out_wire_w : 
+        to_write += "  io.out := top_out({s},0)\n".format(s=out_wire_w)
+    elif  graph_out_w < out_wire_w:
+        to_write += "  io.out := Cat(\"b{m}\".U, top_out)\n\n".format(m=generate_random_binary(out_wire_w-graph_out_w))
+    else :
+        to_write += "  io.out := top_out\n"
+    to_write += "\n"
+    return to_write 
 
 # Encode all Channels in to Chisel wires
 # @params: random graph unit and path to output Chisel file
@@ -74,7 +101,7 @@ def write_vertices_to_modules(unit, pathname):
             rg = vertex["unit"]
             write_random_graph(rg)
             graph_module_name = "_{}_{}".format(rg.hierarchy_level, rg.level_id)
-            to_write += "  val {m}_{vidx:03} \t = Module(new {m}{gm}())\n".format(m=module_name, gm=graph_module_name, vidx=idx)
+            to_write += "  val {m}_{vidx:03} \t = Module(new {m}{gm}())\n".format(m=module_name, gm=graph_module_name, vidx=idx)            
         else:
             to_write += "  val {m}_{vidx:03} \t = Module(new {m}({w}))\n".format(m=module_name, vidx=idx, w=width)
     to_write += "\n"
@@ -108,7 +135,6 @@ def connect_in_wires(vertex):
     idx = vertex.index
     width = vertex["unit"].i
     module_name= ChiselModuleNames(vertex["unit"].type.value).name
-
     to_write += "  {m}_{vidx:03}.io.in \t:= Cat(Seq(".format(m=module_name, vidx=idx)
     for edge in vertex.in_edges():
         to_write += "wire_{e_idx:03},".format(e_idx=edge.index)
@@ -126,7 +152,7 @@ def io_input_to_vertices(inputs_list):
         idx = vertex.index
         width = vertex["unit"].i
         module_name= ChiselModuleNames(vertex["unit"].type.value).name
-        to_write += "  {m}_{vidx:03}.io.in \t:= io.in({e},{s})\n".format(m=module_name, vidx=idx, s=counter, e=counter+width-1)
+        to_write += "  {m}_{vidx:03}.io.in \t:= top_in({e},{s})\n".format(m=module_name, vidx=idx, s=counter, e=counter+width-1)
         counter += width
     return to_write
 
@@ -150,7 +176,7 @@ def connect_out_wires(vertex):
 def io_vertices_to_output(outputs_list):
     to_write=""
     counter=0
-    to_write += "  io.out := Cat(Seq("
+    to_write += "  top_out := Cat(Seq("
     for vertex in outputs_list:
         module_name= ChiselModuleNames(vertex["unit"].type.value).name
         to_write += "{m}_{vidx:03}.io.out,".format(m=module_name, vidx=vertex.index)
@@ -181,7 +207,7 @@ def write_random_graph(rg):
     chisel_file = open(output_chisel_path, "w")
     to_write = ""
     to_write += write_chisel_headers(output_chisel_path, graph_module_name)
-    to_write += write_io_list(rg, output_chisel_path)
+    to_write += write_io_list(rg, output_chisel_path, level)
     to_write += write_edges_to_wires(rg, output_chisel_path)
     to_write += write_vertices_to_modules(rg, output_chisel_path)
     to_write += write_epilogue(rg, output_chisel_path)

@@ -6,6 +6,8 @@ class UnitType(Enum):
     COMPUTE_ADD = 2
     COMPUTE_AND = 3
     COMPUTE_MULTIPLY = 4
+    MEMORY_SHIFT_REG = 5
+
     # sub-categories of COMPUTE = 2, 3,...,9
     MEMORY = 10
     NETWORK = 20
@@ -17,6 +19,7 @@ class ChiselModuleNames(Enum):
     Add = 2
     And = 3
     Multiply = 4
+    ShiftRegister = 5
 
 
 class Unit:

@@ -38,3 +38,15 @@ class Multiply(val n:Int) extends Module {
     val in2 = io.in(half-1,0)
     io.out := in1 * in2
 }
+
+//A n-bit adder 
+class AddWithReg(val n:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt(n.W))
+    val out  = Output(UInt(n.W))
+  })
+    val half = n/2
+    val in1 = io.in(n-1, half)
+    val in2 = io.in(half-1,0)
+    io.out := in1 + in2
+}

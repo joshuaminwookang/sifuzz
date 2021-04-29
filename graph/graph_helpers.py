@@ -14,6 +14,27 @@ yellow = (1,1,.5,1)
 def message(msg):
     print("> "+str(msg))
 
+def generate_random_binary(n):
+    binary_str = ""
+    for i in range(n):
+        temp = str(randint(0, 1))
+
+        # Concatenatin the random 0, 1
+        # to the final result
+        binary_str += temp
+    return binary_str
+
+# set input width of unit to sum of widths of incoming edges
+def get_vertex_io_width(vertex):
+    in_edges = vertex.in_edges()
+    out_edges = vertex.out_edges()
+    in_width = 0; out_width = 0
+    for edge in in_edges:
+        in_width += edge["unit"].width
+    for edge in out_edges:
+        out_width += edge["unit"].width
+    return in_width, out_width
+
 # set input width of unit to sum of widths of incoming edges
 def update_vertex_input_width(vertex):
     edges = vertex.in_edges()

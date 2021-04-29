@@ -21,19 +21,25 @@ orange = (1,.65,0)
 #   - outputs: list of output vertices of graph g
 
 class RandomGraph(Unit):
-    def __init__(self,L=0,I=0):
+    def __init__(self,L=0,I=0, IN_W=0, OUT_W=0):
         self.g = igraph.Graph()
         self.inputs = []
         self.outputs = []
         self.hierarchy_level = L
         self.level_id = I
+        self.in_wire_width = IN_W
+        self.out_wire_width = OUT_W
         # allowed igraph shapes:
         # [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
         # [6] "vrectangle" "none"
 
-    def build_graph(self, N=30):
+    def build_graph(self, N=30,IN_W=0, OUT_W=0):
         # List of vertices that are themselves subgraphs
         subgraph_vertices = []
+
+        # Update wire widths coming in and out of graph (from higher hierachy level graph)
+        self.in_wire_width = IN_W
+        self.out_wire_width = OUT_W
 
         # generate random DAG
         #   loop until DAG successfully generated (always happens on first try for me)
@@ -74,7 +80,7 @@ class RandomGraph(Unit):
 
             # NOT a subgraph
             if rand_val > 0: 
-                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))
+                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 5)))
             # vertex IS a subgraph
             else : 
                 subgraph_vertices.append(vertex)
@@ -146,11 +152,16 @@ class RandomGraph(Unit):
         super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
         self.immutable_widths = True
         self.g = g
+        
+        # Add Memory Units
+        # for i in range(0,M) :
+        #     self.attach_memory_unit()
 
         # Subgraph generation
         for vertex in subgraph_vertices:
             rg = vertex["unit"]
-            rg.build_graph(N=rg.i//2)
+            in_w,out_w = get_vertex_io_width(vertex)
+            rg.build_graph(N=rg.i//2, IN_W= in_w, OUT_W = out_w)
 
         self.save_graph_pdf()
 
@@ -181,25 +192,7 @@ class RandomGraph(Unit):
                 scale_output_from_input(vertex)
                 assign_widths_to_outedges(vertex)
         message("Widths assigned to all channels.")
-
-    # def make_graph_vertex(self, vertex):
-    #     rg = RandomGraph(N=30, L=self.hierarchy_level+1)
-    #     vertex["unit"] = rg
-    #     vertex["color"] = orange
-
-    # def make_compute_vertex(self, vertex, type_num)
-    #     vertex["unit"] = Compute(i=0,o=0, type=UnitType(type_num))
-    #     vertex["color"] = yellow
-    #     if vertex.indegree() == 0:
-    #         vertex["color"] = green
-    #         self.inputs.append(vertex)
-    #     elif vertex.outdegree() == 0:
-    #         vertex["color"] = red
-    #         self.outputs.append(vertex)
-
-    # def random_choose_unit_type(self, vertex):
         
-
     def attach_memory_unit(self):
         while True:
             m = randint(0,len(self.g.vs)-1)
