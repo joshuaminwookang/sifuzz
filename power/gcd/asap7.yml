@@ -1,0 +1,133 @@
+# Technology Setup
+# Technology used is ASAP7
+vlsi.core.technology: asap7
+vlsi.core.node: 7
+technology.asap7.tarball_dir: "/home/ff/eecs151/"
+
+vlsi.core.max_threads: 4
+
+# General Hammer Inputs
+
+vlsi.inputs.supplies.VDD: "0.7 V"
+
+# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
+vlsi.inputs.power_spec_mode: "auto"
+vlsi.inputs.power_spec_type: "cpf"
+
+# Specify the setup and hold corners for ASAP7
+vlsi.inputs.mmmc_corners: [
+  {name: "PVT_0P63V_100C", type: "setup", voltage: "0.63 V", temp: "100 C"},
+  {name: "PVT_0P77V_0C", type: "hold", voltage: "0.77 V", temp: "0 C"}
+]
+
+# SRAM Compiler compiler options
+vlsi.core.sram_generator_tool: "sram_compiler"
+# You should specify a location for the SRAM generator in the tech plugin
+vlsi.core.sram_generator_tool_path: ["/home/ff/eecs151/hammer/src/hammer-vlsi/technology/asap7"]
+vlsi.core.sram_generator_tool_path_meta: "append"
+# Specify this since we are not using macrocompiler
+vlsi.inputs.sram_parameters: "/home/ff/eecs151/hammer/src/hammer-vlsi/technology/asap7/sram-cache.json"
+vlsi.inputs.sram_parameters_meta: ["transclude", "json2list"]
+
+# Tool options. Replace with your tool plugin of choice.
+# Genus options
+vlsi.core.synthesis_tool: "genus"
+vlsi.core.synthesis_tool_path: ["/home/ff/eecs151/hammer-cadence-plugins/synthesis"]
+vlsi.core.synthesis_tool_path_meta: "append"
+synthesis.genus.version: "191"
+
+# Innovus options
+vlsi.core.par_tool: "innovus"
+vlsi.core.par_tool_path: ["/home/ff/eecs151/hammer-cadence-plugins/par"]
+vlsi.core.par_tool_path_meta: "append"
+par.innovus.version: "191"
+par.innovus.design_flow_effort: "standard"
+par.inputs.gds_merge: true
+
+# Calibre options
+vlsi.core.drc_tool: "calibre"
+vlsi.core.drc_tool_path: ["/home/ff/eecs151/hammer-mentor-plugins/drc"]
+vlsi.core.lvs_tool: "calibre"
+vlsi.core.lvs_tool_path: ["/home/ff/eecs151/hammer-mentor-plugins/lvs"]
+drc.calibre.calibre_drc_bin: "/share/instsww/mgc/CALIBRE/bin/calibre"
+drc.calibre.calibredrv_bin: "/share/instsww/mgc/CALIBRE/bin/calibredrv"
+drc.calibre.MGC_HOME: "/shared/instsww/mgc"
+lvs.calibre.calibre_lvs_bin: "/share/instsww/mgc/CALIBRE/bin/calibre"
+lvs.calibre.calibredrv_bin: "/share/instsww/mgc/CALIBRE/bin/calibredrv"
+lvs.calibre.v2lvs_bin: "/share/instsww/mgc/CALIBRE/bin/v2lvs"
+lvs.calibre.MGC_HOME: "/shared/instsww/mgc"
+
+# VCS options
+vlsi.core.sim_tool: "vcs"
+vlsi.core.sim_tool_path: ["/home/ff/eecs151/hammer-synopsys-plugins/sim"]
+vlsi.core.sim_tool_path_meta: "append"
+sim.vcs.version: "P-2019.06"
+
+# Voltus options
+vlsi.core.power_tool: "voltus"
+vlsi.core.power_tool_path: ["/home/ff/eecs151/hammer-cadence-plugins/power"]
+vlsi.core.power_tool_path_meta: "append"
+power.voltus.version: "181"
+
+# Generate Make include to aid in flow 
+vlsi.core.build_system: make
+
+# Power Straps
+par.power_straps_mode: generate
+par.generate_power_straps_method: by_tracks
+par.blockage_spacing: 2.0
+par.generate_power_straps_options:
+  by_tracks:
+    strap_layers:
+      - M3
+      - M4
+      - M5
+      - M6
+      - M7
+      - M8
+      - M9
+    track_width: 14
+    track_width_M3: 7
+    track_width_M5: 24
+    track_width_M8: 6
+    track_width_M9: 6
+    track_spacing: 0
+    power_utilization: 0.05
+    power_utilization_M8: 1.0
+    power_utilization_M9: 1.0
+
+# Specify clock signals
+# ASAP7 bug: period value should actually be in ps
+vlsi.inputs.clocks: [
+  {name: "clock", period: "1000ns", uncertainty: "0.1ns"}
+]
+
+# Placement Constraints
+vlsi.inputs.placement_constraints:
+  - path: "Sha3AccelwBB"
+    type: "toplevel"
+    x: 0
+    y: 0
+    width: 300
+    height: 300
+    margins:
+      left: 10
+      right: 10
+      top: 10
+      bottom: 10
+  - path: "Sha3AccelwBB/dco"
+    type: "hardmacro"
+    x: 100
+    y: 100
+    width: 32
+    height: 32
+    orientation: "r0"
+
+# Pin placement constraints
+vlsi.inputs.pin_mode: generated
+vlsi.inputs.pin.generate_mode: semi_auto
+vlsi.inputs.pin.assignments: [
+  {pins: "*", layers: ["M5", "M7"], side: "bottom"}
+]
+
+
