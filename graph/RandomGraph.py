@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, seed
 
 import igraph
 from Units import *
@@ -16,17 +16,24 @@ orange = (1,.65,0)
 #   - from Unit:
 #       - i, o, type
 #   - g: igraph object
+#   - hierarchy_level: current depth in the hierarchy
 #   - inputs: list of input vertices of graph g
 #   - outputs: list of output vertices of graph g
 
 class RandomGraph(Unit):
-    def __init__(self,N=20):
+    def __init__(self,L=0,I=0):
         self.g = igraph.Graph()
         self.inputs = []
         self.outputs = []
+        self.hierarchy_level = L
+        self.level_id = I
         # allowed igraph shapes:
         # [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
         # [6] "vrectangle" "none"
+
+    def build_graph(self, N=30):
+        # List of vertices that are themselves subgraphs
+        subgraph_vertices = []
 
         # generate random DAG
         #   loop until DAG successfully generated (always happens on first try for me)
@@ -51,24 +58,42 @@ class RandomGraph(Unit):
             edge["unit"] = Channel(width=0)
 
         # iterate over vertices
-        # initialize all "unit" attributes as Compute objects
+        # initialize all "unit" attributes randomly!
         # store input and output vertices (for later)
         for vertex in g.vs:
-            vertex["unit"] = Compute(i=0,o=0)
-            vertex["color"] = yellow
-            if vertex.indegree() == 0:
-                vertex["color"] = green
-                self.inputs.append(vertex)
-            if vertex.outdegree() == 0:
-                vertex["color"] = red
-                self.outputs.append(vertex)
-                
+            seed()
+            rand_val = randint(0, 4) #20% chance of getting a subgraph vertex
+            if self.hierarchy_level > 0 :
+                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))#change bounds as we implement more Unit types
+                vertex["color"] = yellow
+                if vertex.indegree() == 0:
+                    vertex["color"] = green
+                    self.inputs.append(vertex)
+                elif vertex.outdegree() == 0:
+                    vertex["color"] = red
+                    self.outputs.append(vertex)
+            else :
+                if rand_val > 0:
+                    vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 4)))
+                    vertex["color"] = yellow
+                    if vertex.indegree() == 0:
+                        vertex["color"] = green
+                        self.inputs.append(vertex)
+                    elif vertex.outdegree() == 0:
+                        vertex["color"] = red
+                        self.outputs.append(vertex)
+                else :
+                    subgraph_vertices.append(vertex)
+                    rg = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
+                    vertex["unit"] = rg
+                    vertex["color"] = orange
+
         # iterate over input vertices
         # randomly initialize input channel width
         # from these inputs, do Breadth-First Search (BFS)
         #   to assign output channel widths based on input widths
         for input in self.inputs:
-            in_width = 2*randint(4,8)
+            in_width = 4*randint(6,10)
             input["unit"].i = in_width
             input["unit"].o = in_width
             assign_widths_to_outedges(input)
@@ -107,10 +132,16 @@ class RandomGraph(Unit):
         # check for width 0 channels
         for edge in g.es:
             assert(edge["unit"].width > 0)
-
+        
         super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
         self.immutable_widths = True
         self.g = g
+
+        # Subgraph generation
+        for vertex in subgraph_vertices:
+            size = vertex["unit"].i//4
+            print(size)
+            vertex["unit"].build_graph(N=size)
 
     def get_input_width(self):
         input_width = 0
@@ -140,11 +171,24 @@ class RandomGraph(Unit):
                 assign_widths_to_outedges(vertex)
         message("Widths assigned to all channels.")
 
-    def make_hierarchical_vertex(self,vertex):
-        rg = RandomGraph(N=30)
-        vertex["unit"] = rg
-        vertex["color"] = orange
-    
+    # def make_graph_vertex(self, vertex):
+    #     rg = RandomGraph(N=30, L=self.hierarchy_level+1)
+    #     vertex["unit"] = rg
+    #     vertex["color"] = orange
+
+    # def make_compute_vertex(self, vertex, type_num)
+    #     vertex["unit"] = Compute(i=0,o=0, type=UnitType(type_num))
+    #     vertex["color"] = yellow
+    #     if vertex.indegree() == 0:
+    #         vertex["color"] = green
+    #         self.inputs.append(vertex)
+    #     elif vertex.outdegree() == 0:
+    #         vertex["color"] = red
+    #         self.outputs.append(vertex)
+
+    # def random_choose_unit_type(self, vertex):
+        
+
     def attach_memory_unit(self):
         while True:
             m = randint(0,len(self.g.vs)-1)
@@ -179,23 +223,19 @@ class RandomGraph(Unit):
 
 
 ## EXAMPLE USAGE
-rg = RandomGraph(N=30)
+rg = RandomGraph(L=0)
+rg.build_graph()
 
-# Add some memory units
-rg.attach_memory_unit()
-rg.attach_memory_unit()
-rg.attach_memory_unit()
+# # Add some memory units
+# rg.attach_memory_unit()
+# rg.attach_memory_unit()
+# rg.attach_memory_unit()
 
 # visualize_graph(rg.g)
 save_graph_pdf(rg.g)
 
 # Generate Chisel code
-output_chisel_path = "../src/main/scala/RandomHardware.scala"
-write_chisel_headers(output_chisel_path)
-write_io_list(rg, output_chisel_path)
-write_edges_to_wires(rg, output_chisel_path)
-write_vertices_to_modules(rg, output_chisel_path)
-write_epilogue(rg, output_chisel_path)
+write_random_graph(rg)
 
 # # Make a vertex of the graph into a graph itself
 # vertex0 = rg.g.vs[0]
