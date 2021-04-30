@@ -12,6 +12,7 @@ blue  = (.5,.8,1,1)
 yellow = (1,1,.5,1)
 orange = (1,.65,0)
 
+MaxTypeNum = 9
 # class objects:
 #   - from Unit:
 #       - i, o, type
@@ -29,14 +30,15 @@ class RandomGraph(Unit):
         self.level_id = I
         self.in_wire_width = IN_W
         self.out_wire_width = OUT_W
+        super().__init__(type=UnitType.GRAPH)
         # allowed igraph shapes:
         # [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
         # [6] "vrectangle" "none"
 
-    def build_graph(self, N=30,IN_W=0, OUT_W=0):
+    def build_graph(self, N=50,IN_W=0, OUT_W=0):
         # List of vertices that are themselves subgraphs
         subgraph_vertices = []
-
+        print(N)
         # Update wire widths coming in and out of graph (from higher hierachy level graph)
         self.in_wire_width = IN_W
         self.out_wire_width = OUT_W
@@ -68,7 +70,7 @@ class RandomGraph(Unit):
         # store input and output vertices (for later)
         for vertex in g.vs:
             seed()
-            rand_val = randint(self.hierarchy_level //2 , 4) #20% chance of getting a subgraph vertex at level 0 and 1
+            rand_val = randint(self.hierarchy_level//4 , 4) #20% chance of getting a subgraph vertex at level 0 and 1
             
             vertex["color"] = yellow
             if vertex.indegree() == 0:
@@ -79,21 +81,22 @@ class RandomGraph(Unit):
                 self.outputs.append(vertex)
 
             # NOT a subgraph
-            if rand_val > 0: 
-                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, 5)))
+            if rand_val > 0 or len(g.vs) == 1: 
+                vertex["unit"] = Compute(i=0,o=0, type=UnitType(randint(2, MaxTypeNum)))
             # vertex IS a subgraph
             else : 
                 subgraph_vertices.append(vertex)
                 rg = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
                 vertex["unit"] = rg
-                vertex["color"] = orange
+                # vertex["color"] = orange
+                vertex["shape"] = "rectangle"
 
         # iterate over input vertices
         # randomly initialize input channel width
         # from these inputs, do Breadth-First Search (BFS)
         #   to assign output channel widths based on input widths
         for input in self.inputs:
-            in_width = 4*randint(6,10)
+            in_width = 4*randint(N,2*N)
             input["unit"].i = in_width
             input["unit"].o = in_width
             assign_widths_to_outedges(input)
@@ -126,6 +129,10 @@ class RandomGraph(Unit):
                 assign_widths_to_outedges(vertex)
         message("Widths assigned to all channels.")
 
+        # Add Memory Units
+        # for i in range(0,M) :
+        #     attach_memory_unit(g)
+
         # check for width 0 channels
         for edge in g.es:
             assert(edge["unit"].width > 0)
@@ -145,25 +152,23 @@ class RandomGraph(Unit):
         message("Input (green) and Output (red) Channel objects added.")
         message("Random graph constructed!")
 
+
         # DEBUGGING
         # for vertex in g.vs:
         #     vertex["label"] = str(vertex.index) # for debugging
-
-        super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
+        # super().__init__(i=input_width,o=output_width,type=UnitType.GRAPH)
+        self.i = input_width
+        self.o = output_width
         self.immutable_widths = True
-        self.g = g
+        self.g = g 
         
-        # Add Memory Units
-        # for i in range(0,M) :
-        #     self.attach_memory_unit()
-
         # Subgraph generation
         for vertex in subgraph_vertices:
             rg = vertex["unit"]
             in_w,out_w = get_vertex_io_width(vertex)
-            rg.build_graph(N=rg.i//2, IN_W= in_w, OUT_W = out_w)
-
-        self.save_graph_pdf()
+            rg.build_graph(N=N-5, IN_W=in_w, OUT_W = out_w)
+        
+        # self.save_graph_pdf()
 
     def get_input_width(self):
         input_width = 0
@@ -193,37 +198,39 @@ class RandomGraph(Unit):
                 assign_widths_to_outedges(vertex)
         message("Widths assigned to all channels.")
         
-    def attach_memory_unit(self):
-        while True:
-            m = randint(0,len(self.g.vs)-1)
-            vertex_read = self.g.vs[m]
-            if not vertex_read["unit"].connected_to_mem:
-                break
-        while True:
-            m = randint(0,len(self.g.vs)-1)
-            vertex_write = self.g.vs[m]
-            if not vertex_write["unit"].connected_to_mem:
-                break
-        g = self.g
-        g.add_vertex()
-        memory_vertex = g.vs[len(g.vs)-1]
-        datawidth = min(vertex_read["unit"].i, vertex_write["unit"].o)
-        addrwidth = min(randint(1,10), vertex_read["unit"].o, vertex_write["unit"].o)
-        memory_vertex["unit"] = Memory(datawidth=datawidth,addrwidth=addrwidth)
-        memory_vertex["label"] = "\n\n\n{a},{d}".format(d=datawidth,a=addrwidth)
+    
 
-        #TODO: attach MemoryChannel objects to each edge
-        g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory (addr)
-        g.add_edges([(memory_vertex.index,vertex_read.index)])  # vertex_read   <-- memory (data)
-        g.add_edges([(vertex_write.index,memory_vertex.index)]) # vertex_write  --> memory (data+addr)
-        for new_edge in g.es[(len(g.es)-3):(len(g.es))]:
-            new_edge["color"] = blue
+    # def attach_memory_unit(self):
+    #     while True:
+    #         m = randint(0,len(self.g.vs)-1)
+    #         vertex_read = self.g.vs[m]
+    #         if not vertex_read["unit"].connected_to_mem:
+    #             break
+    #     while True:
+    #         m = randint(0,len(self.g.vs)-1)
+    #         vertex_write = self.g.vs[m]
+    #         if not vertex_write["unit"].connected_to_mem:
+    #             break
+    #     g = self.g
+    #     g.add_vertex()
+    #     memory_vertex = g.vs[len(g.vs)-1]
+    #     datawidth = min(vertex_read["unit"].i, vertex_write["unit"].o)
+    #     addrwidth = min(randint(1,10), vertex_read["unit"].o, vertex_write["unit"].o)
+    #     memory_vertex["unit"] = Memory(datawidth=datawidth,addrwidth=addrwidth)
+    #     memory_vertex["label"] = "\n\n\n{a},{d}".format(d=datawidth,a=addrwidth)
 
-        vertex_read["unit"].i += memory_vertex["unit"].o
-        memory_vertex["shape"] = "rectangle"
-        memory_vertex["color"] = blue
-        vertex_read["unit"].connected_to_mem = True
-        vertex_write["unit"].connected_to_mem = True
+    #     #TODO: attach MemoryChannel objects to each edge
+    #     g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory (addr)
+    #     g.add_edges([(memory_vertex.index,vertex_read.index)])  # vertex_read   <-- memory (data)
+    #     g.add_edges([(vertex_write.index,memory_vertex.index)]) # vertex_write  --> memory (data+addr)
+    #     for new_edge in g.es[(len(g.es)-3):(len(g.es))]:
+    #         new_edge["color"] = blue
+
+    #     vertex_read["unit"].i += memory_vertex["unit"].o
+    #     memory_vertex["shape"] = "rectangle"
+    #     memory_vertex["color"] = blue
+    #     vertex_read["unit"].connected_to_mem = True
+    #     vertex_write["unit"].connected_to_mem = True
 
     def save_graph_pdf(self):
         layout = self.g.layout("fr")
@@ -233,7 +240,7 @@ class RandomGraph(Unit):
 
 rg = RandomGraph(L=0)
 try:
-    rg.build_graph()
+    rg.build_graph(N=30)
 except AssertionError as error:
     message(error)
     # rg.build_graph()

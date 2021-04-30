@@ -78,6 +78,39 @@ def connect_memory_unit(g, vertex_read, vertex_write):
     compute_vertex["unit"].connected_to_mem = True
 
 
+# ASSUME: g is a igraph Graph object
+def attach_memory_unit(g):
+    while True:
+        m = randint(0,len(g.vs)-1)
+        vertex_read = g.vs[m]
+        if not vertex_read["unit"].connected_to_mem:
+            break
+    while True:
+        m = randint(0,len(g.vs)-1)
+        vertex_write = g.vs[m]
+        if not vertex_write["unit"].connected_to_mem:
+            break
+    
+    g.add_vertex()
+    memory_vertex = g.vs[len(g.vs)-1]
+    datawidth = min(vertex_read["unit"].i, vertex_write["unit"].o)
+    addrwidth = min(randint(1,10), vertex_read["unit"].o, vertex_write["unit"].o)
+    memory_vertex["unit"] = Memory(datawidth=datawidth,addrwidth=addrwidth)
+    memory_vertex["label"] = "\n\n\n{a},{d}".format(d=datawidth,a=addrwidth)
+
+    #TODO: attach MemoryChannel objects to each edge
+    g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory (addr)
+    g.add_edges([(memory_vertex.index,vertex_read.index)])  # vertex_read   <-- memory (data)
+    g.add_edges([(vertex_write.index,memory_vertex.index)]) # vertex_write  --> memory (data+addr)
+    for new_edge in g.es[(len(g.es)-3):(len(g.es))]:
+        new_edge["color"] = blue
+
+    vertex_read["unit"].i += memory_vertex["unit"].o
+    memory_vertex["shape"] = "rectangle"
+    memory_vertex["color"] = blue
+    vertex_read["unit"].connected_to_mem = True
+    vertex_write["unit"].connected_to_mem = True
+
 # def format_memory_vertex(vertex):
 #     unit = vertex["unit"]
 #     in_edge = unit.in_edges()[0]
