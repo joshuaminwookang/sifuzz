@@ -9,3 +9,4 @@ Reg,m,n,n,n,b
 RegE,m,n,n+1,n,b
 RegFile2R1W,m,n;a,n+2*a,2*n,b
 Mux2,c,n,2*n+1,n,o
+Mux4,c,n,4*n+2,n,e
