@@ -62,7 +62,7 @@ class RandomGraph(Unit):
             edge["unit"] = Channel(width=0)
 
         ''' iterate over vertices
-            initialize all "unit" attributes randomly!
+            initialize all "unit" attributes randomly
             store input and output vertices (for later)
         '''
         for vertex in g.vs:
