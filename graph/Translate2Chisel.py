@@ -7,6 +7,7 @@ from random import randint
 import igraph
 from Units import *
 from graph_helpers import *
+from chisel_module_helpers import *
 
 
 # Setup Chisel output file
@@ -97,8 +98,8 @@ def write_vertices_to_modules(unit, pathname):
     for vertex in g.vs:
         idx = vertex.index
         width = vertex["unit"].i
-        module_name= ChiselModuleNames(vertex["unit"].type.value).name
-        # to_write += "  val {m}_{vidx:03} \t = Module(new {m}({w}))\n".format(m=module_name, vidx=idx, w=width)
+        module_name = get_chisel_module_name(vertex)
+        # module_name= ChiselModuleNames(vertex["unit"].type.value).name
         # recursively instantiate subgraphs 
         if vertex["unit"].type.value == 0 : # the vertex is of type GRAPH
             rg = vertex["unit"]
@@ -106,7 +107,7 @@ def write_vertices_to_modules(unit, pathname):
             graph_module_name = "_{}_{}".format(rg.hierarchy_level, rg.level_id)
             to_write += "  val {m}_{vidx:03} \t = Module(new {m}{gm}())\n".format(m=module_name, gm=graph_module_name, vidx=idx)            
         else:
-            to_write += "  val {m}_{vidx:03} \t = Module(new {m}({w}))\n".format(m=module_name, vidx=idx, w=width)
+            to_write += "  val {m}_{vidx:03} \t = Module(new {m}({p}))\n".format(m=module_name, vidx=idx, p=get_chisel_module_params(vertex))
     to_write += "\n"
 
     # now connect the modules to I/O or internal wires
@@ -136,7 +137,8 @@ def connect_in_wires(vertex):
     to_write=""
     idx = vertex.index
     width = vertex["unit"].i
-    module_name= ChiselModuleNames(vertex["unit"].type.value).name
+    module_name = get_chisel_module_name(vertex)
+    # module_name= ChiselModuleNames(vertex["unit"].type.value).name
     to_write += "  {m}_{vidx:03}.io.in \t:= Cat(Seq(".format(m=module_name, vidx=idx)
     for edge in vertex.in_edges():
         to_write += "wire_{e_idx:03},".format(e_idx=edge.index)
@@ -159,8 +161,8 @@ def io_input_to_vertices(inputs_list):
                 width = vertex["unit"].in_wire_width 
         else:
             width = vertex["unit"].i
-
-        module_name= ChiselModuleNames(vertex["unit"].type.value).name
+        module_name = get_chisel_module_name(vertex)
+        # module_name= ChiselModuleNames(vertex["unit"].type.value).name
         to_write += "  {m}_{vidx:03}.io.in \t:= top_in({e},{s})\n".format(m=module_name, vidx=idx, s=counter, e=counter+width-1)
         counter += width
     return to_write
@@ -171,7 +173,8 @@ def io_input_to_vertices(inputs_list):
 def connect_out_wires(vertex):
     to_write=""
     counter=0
-    module_name= ChiselModuleNames(vertex["unit"].type.value).name
+    module_name = get_chisel_module_name(vertex)
+    # module_name= ChiselModuleNames(vertex["unit"].type.value).name
     for edge in vertex.out_edges():
         width = edge["unit"].width
         to_write += "  wire_{e_idx:03} \t :=  {m}_{vidx:03}.io.out({e},{s})\n".format(e_idx=edge.index, m=module_name, 
@@ -187,7 +190,8 @@ def io_vertices_to_output(outputs_list):
     counter=0
     to_write += "  top_out := Cat(Seq("
     for vertex in outputs_list:
-        module_name= ChiselModuleNames(vertex["unit"].type.value).name
+        module_name = get_chisel_module_name(vertex)
+        # module_name= ChiselModuleNames(vertex["unit"].type.value).name
         to_write += "{m}_{vidx:03}.io.out,".format(m=module_name, vidx=vertex.index)
     to_write = to_write[:-1] + "))\n\n"
     return to_write

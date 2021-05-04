@@ -1,9 +1,10 @@
-from random import randint
+from random import randint, seed
 from math import floor
 import igraph
 from Units import *
 from datetime import datetime
 import pathlib
+from chisel_module_helpers import *
 
 
 red   = (1,.5,.5,1)
@@ -68,7 +69,6 @@ def connect_memory_unit(g, vertex_read, vertex_write):
     g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory
     new_edge = g.es[len(g.es)-1]
     set_channel_width(new_edge,memory_vertex["unit"].i)
-    # print("mem in: "+str(memory_vertex["unit"].i))
 
     # add memory channel to compute unit's input
     compute_vertex["unit"].i += memory_vertex["unit"].o
@@ -139,7 +139,7 @@ def scale_output_from_input(vertex):
     # (perhaps when input width falls below a certain threshold)
     # if (vertex["unit"].i < vertex.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
-    # elif (vertex["unit"].i < 2*vertex.outdegree()):
+    # elif (vertex["unit"].i < 2*verte x.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
     # elif (vertex["unit"].i < 6*vertex.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
@@ -149,5 +149,3 @@ def scale_output_from_input(vertex):
 def visualize_graph(graph):
     layout = graph.layout("fr")
     igraph.plot(graph,layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
-
-
