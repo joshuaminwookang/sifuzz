@@ -33,6 +33,7 @@ def assign_chisel_module(vertex):
         s = 'solve(' + in_expr + ' - ' + str(in_width) +')'
         sols = eval(s)
         n = int(sols[0])
+        if (n <= 0): continue
         for var in chisel_dict["vars"]:
             chisel_dict[var] = eval(var)
         if (in_width == eval(in_expr)):

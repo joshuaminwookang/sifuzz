@@ -15,6 +15,8 @@ yellow = (1,1,.5,1)
 orange = (1,.65,0)
 
 MaxTypeNum = 9
+
+Hierarchical = False
 ''' class objects:
     - from Unit:
         - i, o, type
@@ -158,19 +160,22 @@ class RandomGraph(Unit):
     def instantiate_vertex(self,vertex):
         seed()
         rand_val = randint(0, 10) #10% chance of getting a subgraph vertex at level 0 and 1
-        # NOT a subgraph
-        #h if rand_val > 0 or self.hierarchy_level > 1:
-        vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
-        assign_chisel_module(vertex)
-        # vertex IS a subgraph
-        #h else : 
-        #h     vertex["unit"] = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
-        #h     vertex["color"] = orange
-        #h     vertex["shape"] = "rectangle"
-        #h     vertex["unit"].build_graph()
-        #h     # TODO: maybe wrap this chisel dict in assign_chisel_module?
-        #h     chisel_dict = {"name":"RandomHardware"}
-        #h     vertex["chisel"] = chisel_dict
+        if Hierarchical:
+            if rand_val > 0 or self.hierarchy_level > 1: # NOT a subgraph
+                vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
+                assign_chisel_module(vertex)
+            else : # vertex IS a subgraph
+                vertex["unit"] = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
+                vertex["color"] = orange
+                vertex["shape"] = "rectangle"
+                vertex["unit"].build_graph()
+                # TODO: maybe wrap this chisel dict in assign_chisel_module?
+                chisel_dict = {"name":"RandomHardware"}
+                vertex["chisel"] = chisel_dict
+        else: # not Hierarchical
+            vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
+            assign_chisel_module(vertex)
+        
     # def attach_memory_unit(self):
     #     while True:
     #         m = randint(0,len(self.g.vs)-1)
