@@ -1,11 +1,10 @@
 from random import randint, seed
 
-import igraph
+import igraph, math
 from Units import *
 from graph_helpers import *
 from chisel_module_helpers import *
-
-from Translate2Chisel import *
+from generate_chisel import *
 
 M = 2  # number of memory units
 red   = (1,.5,.5,1)
@@ -14,9 +13,9 @@ blue  = (.5,.8,1,1)
 yellow = (1,1,.5,1)
 orange = (1,.65,0)
 
-MaxTypeNum = 9
+MaxTypeNum = 10
 
-Hierarchical = False
+Hierarchical = True
 ''' class objects:
     - from Unit:
         - i, o, type
@@ -39,26 +38,34 @@ class RandomGraph(Unit):
         # [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
         # [6] "vrectangle" "none"
 
-    def build_graph(self, N=50,IN_W=0, OUT_W=0):
+    def build_graph(self, N=50, IN_W=0, OUT_W=0):
         # List of vertices that are themselves subgraphs
         subgraph_vertices = []
         # Update wire widths coming in and out of graph (from higher hierachy level graph)
         self.in_wire_width = IN_W
         self.out_wire_width = OUT_W
+        self.N = N
 
         ''' generate random DAG
             loop until DAG successfully generated (always happens on first try for me)
             do this because feedback_arc_set() uses a heuristic, so it might fail with complex graph
         '''
         while True:
-            g = igraph.Graph.Erdos_Renyi(n=N, p=0.03,directed=True,loops=False)
+            g = igraph.Graph.Erdos_Renyi(n=N, p=0.03,directed=True, loops=False)
             extra_edges = g.feedback_arc_set()
             g.delete_edges(extra_edges)
             # only keep largest connected graph (remove unconnected vertices/edges)
             g = g.clusters(mode='weak').giant()
             if g.is_dag():
-                message('Random DAG created!')
-                break
+                # Check if given input width is large enough for generated graph 
+                diameter_vs = g.get_diameter()
+                min_in_w = 2
+                for vid in diameter_vs[:-1] :
+                    min_in_w *= g.vs[vid].outdegree()
+                if IN_W > min_in_w : 
+                    message('Random DAG created!')
+                    break
+
         # iterate over edges and create channel object
         for edge in g.es:
             edge["unit"] = Channel(width=0)
@@ -82,8 +89,17 @@ class RandomGraph(Unit):
             from these inputs, do Breadth-First Search (BFS)
             to assign output channel widths based on input widths
         '''   
+        remaining_in_width = IN_W
+        remaining_inputs = len(self.inputs)
         for input in self.inputs:
-            in_width = 4*randint(6,10)
+            mean_in_width = remaining_in_width // remaining_inputs
+            assert(mean_in_width >= 4)
+
+            # Heuristic: roughly distribute input widths equally across all input vertices
+            in_width = max(4, randint(mean_in_width//4-1, mean_in_width//4+2) * 4) if remaining_inputs > 1 else remaining_in_width
+            remaining_in_width -= in_width
+            remaining_inputs -= 1
+            
             input["unit"].i = in_width
             self.instantiate_vertex(input)
             assign_widths_to_outedges(input)
@@ -114,15 +130,14 @@ class RandomGraph(Unit):
         self.i = input_width
         self.o = output_width
         self.immutable_widths = True
-        self.g = g 
-        
+        self.g = g
         # Subgraph generation
         # for vertex in subgraph_vertices:
         #     rg = vertex["unit"]
         #     in_w,out_w = get_vertex_io_width(vertex)
         #     rg.build_graph(N=N-5, IN_W=in_w, OUT_W = out_w)
         
-        # self.save_graph_pdf()
+        self.save_graph_pdf()
         # for v in g.vs:
         #     print(v["chisel"])
 
@@ -159,19 +174,21 @@ class RandomGraph(Unit):
     # in either case, output width is set
     def instantiate_vertex(self,vertex):
         seed()
-        rand_val = randint(0, 10) #10% chance of getting a subgraph vertex at level 0 and 1
+        rand_val = randint(0, 3*self.hierarchy_level) #10% chance of getting a subgraph vertex at level 0 and 1
+        in_w,out_w = get_vertex_io_width(vertex)
         if Hierarchical:
-            if rand_val > 0 or self.hierarchy_level > 1: # NOT a subgraph
+            if rand_val > 0 or self.hierarchy_level > 3 or in_w < 12: # NOT a subgraph
                 vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
                 assign_chisel_module(vertex)
             else : # vertex IS a subgraph
                 vertex["unit"] = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
                 vertex["color"] = orange
                 vertex["shape"] = "rectangle"
-                vertex["unit"].build_graph()
+                vertex["chisel"] = {"name":"RandomHardware"}                
+                next_N = min(math.floor(math.log(in_w,2)), in_w/2)
+                message("Building subgraph for vertex size {} from width {}".format(next_N,in_w))
+                vertex["unit"].build_graph(N=next_N, IN_W=in_w, OUT_W=out_w)
                 # TODO: maybe wrap this chisel dict in assign_chisel_module?
-                chisel_dict = {"name":"RandomHardware"}
-                vertex["chisel"] = chisel_dict
         else: # not Hierarchical
             vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
             assign_chisel_module(vertex)
@@ -214,25 +231,6 @@ class RandomGraph(Unit):
 
 ## EXAMPLE USAGE
 
-rg = RandomGraph()
-try:
-    rg.build_graph(N=30)
-except AssertionError as error:
-    message(error)
-    # rg.build_graph()
-
-# # Add some memory units
-# rg.attach_memory_unit()
-# rg.attach_memory_unit()
-# rg.attach_memory_unit()
-
-# visualize_graph(rg.g)
-# save_graph_pdf(rg.g)
-
-# Generate Chisel code
+rg = RandomGraph(L=0)
+rg.build_graph(N=30, IN_W = 600)
 write_random_graph(rg)
-
-# # Make a vertex of the graph into a graph itself
-# vertex0 = rg.g.vs[0]
-# rg.make_hierarchical_vertex(vertex0)
-# visualize_graph(vertex0["unit"].g)

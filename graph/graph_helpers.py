@@ -4,7 +4,7 @@ import igraph
 from Units import *
 from datetime import datetime
 import pathlib
-from chisel_module_helpers import *
+# from chisel_module_helpers import *
 
 
 red   = (1,.5,.5,1)
