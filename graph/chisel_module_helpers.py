@@ -66,7 +66,7 @@ def assign_chisel_module(vertex):
         # Two variables decidiing I/O width of given module
         # For modules that use extra param 'a', choose a random value < in_width/3
         n = symbols('n')
-        a = randint(1, max(int(in_width/3),1)) # TODO: clean this up
+        a = randint(1, min(max(int(in_width/3),1),7)) # TODO: clean this up
 
         # Evaluate value of n 
         in_expr = chisel_dict["in_expr"]
