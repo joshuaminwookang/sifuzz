@@ -2,3 +2,6 @@
 *.log
 *.f
 *.anno.json
+graph/__pycache__
+target
+project

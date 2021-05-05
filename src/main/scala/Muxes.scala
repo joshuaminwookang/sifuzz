@@ -23,7 +23,7 @@ class Mux4(val n:Int) extends Module {
     val in  = Input(UInt((4*n+2).W))
     val out  = Output(UInt(n.W))
   })
-  val sel = io.in(4*n+1,4*n).asBool
+  val sel = io.in(4*n+1,4*n)
   val in3 = io.in(4*n-1,3*n)
   val in2 = io.in(3*n-1,2*n)
   val in1 = io.in(2*n-1,n)
@@ -39,7 +39,7 @@ class Mux8(val n:Int) extends Module {
     val in  = Input(UInt((8*n+3).W))
     val out  = Output(UInt(n.W))
   })
-  val sel = io.in(8*n+2,8*n).asBool
+  val sel = io.in(8*n+2,8*n)
   val in7 = io.in(8*n-1,3*n)
   val in6 = io.in(7*n-1,2*n)
   val in5 = io.in(6*n-1,5*n)
