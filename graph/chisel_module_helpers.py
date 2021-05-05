@@ -1,8 +1,7 @@
 from random import randint, seed
-import igraph
-import csv
+import igraph, csv, math
 from Units import *
-from sympy import symbols, Eq, solve, parse_expr
+from sympy import symbols, solve, parse_expr, log
 
 
 chisel_list_dict = []
@@ -34,13 +33,13 @@ len_chisel_list_same_io_odd = len(chisel_list_same_io_odd)
 
 ''' Assigns chisel module to a vertex
     vertex["chisel"] = dict
+    @returns: the unit type number 
 '''
 def assign_chisel_module(vertex):
-    seed()
-    # Set 10% chance of getting a subgraph vertex
     in_width = vertex["unit"].i
     # Loop until we find appropriate module
     while(True):
+
         # Pick a Chisel module randomly from entire pool of possible modules
         idx_chisel = 0
         chisel_dict = []
@@ -60,13 +59,13 @@ def assign_chisel_module(vertex):
             else:
                 idx_chisel = randint(0,len_chisel_list_odd-1)
                 chisel_dict = chisel_list_odd[idx_chisel].copy() # this module's dictionary
+        # check for too big RFs
         
-        # print("IN WIDTH: {}".format(in_width))
-        # print("out: {}  {}, {}".format(vertex.outdegree(), chisel_dict["fanin2out"], chisel_dict["in_parity"]))
         # Two variables decidiing I/O width of given module
         # For modules that use extra param 'a', choose a random value < in_width/3
         n = symbols('n')
-        a = randint(1, min(max(int(in_width/3),1),7)) # TODO: clean this up
+        seed()
+        a = math.floor(log(in_width,2)) -2 + randint(0,3) # Guess: a = log (n), where n+2a == in_width
 
         # Evaluate value of n 
         in_expr = chisel_dict["in_expr"]
@@ -76,18 +75,31 @@ def assign_chisel_module(vertex):
 
         # final check if n is positive integer
         if (int(sols[0]) < vertex.outdegree()): continue
+        if chisel_dict["name"] == "RegFile2R1W" and n > 128: continue
 
         for var in chisel_dict["vars"]:
             chisel_dict[var] = eval(var)
+            # if var=="a" and a != math.ceil(log(n,2)) : continue
+
+        if "a" in chisel_dict["vars"] and a != math.ceil(log(n,2)): continue
 
         if (in_width == eval(in_expr)):
             vertex["chisel"] = chisel_dict
             vertex["unit"].o = eval(out_expr)
-            break
+            module_type = chisel_dict["type"]
+            return 1 if module_type == 'c' else 2 # TODO do pattern matching once we have network (and/or other types) units
 
+'''
+Helper methods called in other scripts 
+@returns: current vertex's Chisel module name (as appears in Chisel)
+'''
 def get_chisel_module_name(vertex):
     return vertex["chisel"]["name"]
 
+'''
+Helper methods called in other scripts 
+@returns: parameters that go into the vertex's Chisel module (as appears in Chisel)
+'''
 def get_chisel_module_params(vertex):
     chisel_dict = vertex["chisel"]
     vars_vect = chisel_dict['vars']
@@ -96,3 +108,6 @@ def get_chisel_module_params(vertex):
         var_value = chisel_dict[var]
         param_string += var + "=" + str(var_value) + ","
     return param_string[0:len(param_string)-1]
+
+# print("IN WIDTH: {}".format(in_width))
+        # print("out: {}  {}, {}".format(vertex.outdegree(), chisel_dict["fanin2out"], chisel_dict["in_parity"]))

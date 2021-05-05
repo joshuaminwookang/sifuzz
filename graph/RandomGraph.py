@@ -12,10 +12,8 @@ green = (.5,1,.5,1)
 blue  = (.5,.8,1,1)
 yellow = (1,1,.5,1)
 orange = (1,.65,0)
-
-MaxTypeNum = 10
-
 Hierarchical = True
+
 ''' class objects:
     - from Unit:
         - i, o, type
@@ -174,25 +172,42 @@ class RandomGraph(Unit):
     # in either case, output width is set
     def instantiate_vertex(self,vertex):
         seed()
-        rand_val = randint(0, 3*self.hierarchy_level) #10% chance of getting a subgraph vertex at level 0 and 1
+        rand_val = randint(0, 3*self.hierarchy_level) #always (unless there's an in width constraint), 1/4, 1/7, 1/10 chance
         in_w,out_w = get_vertex_io_width(vertex)
         if Hierarchical:
             if rand_val > 0 or self.hierarchy_level > 3 or in_w < 12: # NOT a subgraph
-                vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
-                assign_chisel_module(vertex)
+                # vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
+                module = assign_chisel_module(vertex)
+                vertex["unit"] = Compute(i=vertex["unit"].i, o=vertex["unit"].o, type=UnitType(module))
             else : # vertex IS a subgraph
                 vertex["unit"] = RandomGraph(L=self.hierarchy_level+1, I=vertex.index)
                 vertex["color"] = orange
                 vertex["shape"] = "rectangle"
-                vertex["chisel"] = {"name":"RandomHardware"}                
+                vertex["chisel"] = {"name":"RandomHardware"} 
+
                 next_N = min(math.floor(math.log(in_w,2)), in_w/2)
-                message("Building subgraph for vertex size {} from width {}".format(next_N,in_w))
                 vertex["unit"].build_graph(N=next_N, IN_W=in_w, OUT_W=out_w)
+                message("Building subgraph for vertex size {} from width {}".format(next_N,in_w))
+
                 # TODO: maybe wrap this chisel dict in assign_chisel_module?
         else: # not Hierarchical
-            vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
-            assign_chisel_module(vertex)
-        
+            module = assign_chisel_module(vertex)
+            vertex["unit"] = Compute(i=vertex["unit"].i, o=vertex["unit"].o, type=UnitType(module))
+            
+    
+    def save_graph_pdf(self):
+        layout = self.g.layout("fr")
+        igraph.plot(self.g, "/home/ubuntu/random_graph_{}_{}.pdf".format(self.hierarchy_level, self.level_id), layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
+
+## EXAMPLE USAGE
+
+rg = RandomGraph(L=0)
+rg.build_graph(N=20, IN_W = 400)
+write_random_graph(rg)
+
+
+
+
     # def attach_memory_unit(self):
     #     while True:
     #         m = randint(0,len(self.g.vs)-1)
@@ -224,13 +239,3 @@ class RandomGraph(Unit):
     #     memory_vertex["color"] = blue
     #     vertex_read["unit"].connected_to_mem = True
     #     vertex_write["unit"].connected_to_mem = True
-
-    def save_graph_pdf(self):
-        layout = self.g.layout("fr")
-        igraph.plot(self.g, "/home/ubuntu/random_graph_{}_{}.pdf".format(self.hierarchy_level, self.level_id), layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
-
-## EXAMPLE USAGE
-
-rg = RandomGraph(L=0)
-rg.build_graph(N=30, IN_W = 600)
-write_random_graph(rg)
