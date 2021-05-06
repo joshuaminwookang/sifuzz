@@ -121,16 +121,36 @@ def attach_memory_unit(g):
 # assume vertex["unit"] is in class Unit with vertex["unit"].o set to a value
 # iterate over vertex's outgoing edges and divide output width evenly among them
 def assign_widths_to_outedges(vertex):
+    seed() # init random seed
     edges = vertex.out_edges()
     num_edges = vertex.outdegree()
+    # print("DISTRIBUTE: {} over {}".format(vertex["unit"].o, num_edges))
     if num_edges > 0:
         out_width = vertex["unit"].o
         out_width_peredge = floor(out_width/num_edges)
-        for idx in range(num_edges-1):
-            set_channel_width(edges[idx],out_width_peredge)
-        # remaining edge gets rest of bits
-        lastedge_width = out_width - out_width_peredge*(num_edges-1)
-        set_channel_width(edges[-1], lastedge_width)
+        for idx in range(num_edges):
+            random_number = randint(0,3) # with 75% chance propagate entire output
+            if random_number == 0 and out_width_peredge > 4: 
+                set_channel_width(edges[idx],out_width_peredge)
+                # print("Got: {} ".format(out_width_peredge))
+            else : 
+                set_channel_width(edges[idx],out_width)
+                # print("Got: {} ".format(out_width))
+
+# assume vertex["unit"] is in class Unit with vertex["unit"].o set to a value
+# iterate over vertex's outgoing edges and either 
+# (1) replicate output entirely or (2) choose a select portion of the wire to propagate
+# def assign_widths_to_outedges(vertex):
+#     edges = vertex.out_edges()
+#     num_edges = vertex.outdegree()
+#     if num_edges > 0:
+#         out_width = vertex["unit"].o
+#         out_width_peredge = floor(out_width/num_edges)
+#         for idx in range(num_edges-1):
+#             set_channel_width(edges[idx],out_width_peredge)
+#         # remaining edge gets rest of bits
+#         lastedge_width = out_width - out_width_peredge*(num_edges-1)
+#         set_channel_width(edges[-1], lastedge_width)
 
 # currently for simplicity, set output = input width
 def scale_output_from_input(vertex):

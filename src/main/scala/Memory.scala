@@ -52,7 +52,7 @@ class RegFile2R1W(val n:Int, val a:Int) extends Module {
 
 class ResetShiftRegister(val n:Int) extends Module {
   val io = IO(new Bundle {
-    val in    = Input(UInt(n+1.W))
+    val in    = Input(UInt((n+1).W))
     val out   = Output(UInt(n.W))
   })
   // Register reset to zero

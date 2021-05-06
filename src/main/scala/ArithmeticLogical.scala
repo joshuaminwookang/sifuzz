@@ -2,6 +2,7 @@
 package randomhardware
 
 import chisel3._
+import chisel3.util._
 
 //A n-bit adder 
 class Add(val n:Int) extends Module {
@@ -20,9 +21,10 @@ class Sub(val n:Int) extends Module {
     val in  = Input(UInt((2*n).W))
     val out  = Output(UInt((n+1).W))
   })
-    val in1 = SInt(io.in(2*n-1,n))
-    val in2 = SInt(io.in(n-1,0))
-    io.out := UInt(in1 - in2)
+    val in1 = io.in(2*n-1,n).asSInt
+    val in2 = io.in(n-1,0).asSInt
+    val sub = in1 - in2
+    io.out := sub.asUInt
 }
 
 //A n-bit and unit 

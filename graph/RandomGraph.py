@@ -6,7 +6,6 @@ from graph_helpers import *
 from chisel_module_helpers import *
 from generate_chisel import *
 
-M = 2  # number of memory units
 red   = (1,.5,.5,1)
 green = (.5,1,.5,1)
 blue  = (.5,.8,1,1)
@@ -29,8 +28,8 @@ class RandomGraph(Unit):
         self.outputs = []
         self.hierarchy_level = L
         self.level_id = I
-        self.in_wire_width = IN_W
-        self.out_wire_width = OUT_W
+        # self.in_wire_width = IN_W
+        # self.out_wire_width = OUT_W
         super().__init__(type=UnitType.GRAPH)
         # allowed igraph shapes:
         # [1] "circle"     "square"     "csquare"    "rectangle"  "crectangle"
@@ -39,19 +38,20 @@ class RandomGraph(Unit):
     def build_graph(self, N=50, IN_W=0, OUT_W=0):
         # List of vertices that are themselves subgraphs
         subgraph_vertices = []
-        # Update wire widths coming in and out of graph (from higher hierachy level graph)
-        self.in_wire_width = IN_W
-        self.out_wire_width = OUT_W
         self.N = N
+        self.i = IN_W
 
         ''' generate random DAG
             loop until DAG successfully generated (always happens on first try for me)
             do this because feedback_arc_set() uses a heuristic, so it might fail with complex graph
         '''
         while True:
-            g = igraph.Graph.Erdos_Renyi(n=N, p=0.03,directed=True, loops=False)
+            # randomly choose connectivity
+            weight_function = 0.01 * randint(3,7)
+            g = igraph.Graph.Erdos_Renyi(n=N, p=weight_function,directed=True, loops=False)
             extra_edges = g.feedback_arc_set()
             g.delete_edges(extra_edges)
+
             # only keep largest connected graph (remove unconnected vertices/edges)
             g = g.clusters(mode='weak').giant()
             if g.is_dag():
@@ -95,12 +95,13 @@ class RandomGraph(Unit):
 
             # Heuristic: roughly distribute input widths equally across all input vertices
             in_width = max(4, randint(mean_in_width//4-1, mean_in_width//4+2) * 4) if remaining_inputs > 1 else remaining_in_width
+            input["unit"].i = in_width
             remaining_in_width -= in_width
             remaining_inputs -= 1
             
-            input["unit"].i = in_width
             self.instantiate_vertex(input)
             assign_widths_to_outedges(input)
+
             vertex_iter = g.bfsiter(input.index)
             next(vertex_iter) # advance iterator past input vertex
             for vertex in vertex_iter:
@@ -113,32 +114,30 @@ class RandomGraph(Unit):
             outputs - red
             labels of input/output vertices denote channel width of that input
         '''
-        input_width = 0
-        output_width = 0
-        for input in self.inputs:
-            input["label"] = str(input["unit"].i)
-            input_width += input["unit"].i
-        for output in self.outputs:
-            output["label"] = str(output["unit"].o)
-            output_width += output["unit"].o
+        # self.i = self.visualize_inputs_get_width(g)
+        # self.o = self.visualize_outputs_get_width(g)
+        self.get_input_width()
+        self.get_output_width()
         message("Input (green) and Output (red) Channel objects added.")
+
+        self.immutable_widths = True
+        self.g = g  
         message("Random graph constructed!")
 
-
-        self.i = input_width
-        self.o = output_width
-        self.immutable_widths = True
-        self.g = g
-        # Subgraph generation
-        # for vertex in subgraph_vertices:
-        #     rg = vertex["unit"]
-        #     in_w,out_w = get_vertex_io_width(vertex)
-        #     rg.build_graph(N=N-5, IN_W=in_w, OUT_W = out_w)
-        
-        self.save_graph_pdf()
+        # self.save_graph_pdf()
         # for v in g.vs:
         #     print(v["chisel"])
-
+    
+    def add_visualization_features(self) :
+        g = self.g
+        for input in self.inputs:
+            input_port = g.add_vertex(1)
+            input_port["shape"] = "hidden"
+            in_edge = g.add_edge(len(g.vs)-1, input.index)
+            set_channel_width(g.es[len(g.es)-1], input["unit"].i)
+        for output in self.outputs:
+            set_channel_width(g.es[len(g.es)-1], output["unit"].o)
+            
     def get_input_width(self):
         input_width = 0
         for input in self.inputs:
@@ -170,13 +169,12 @@ class RandomGraph(Unit):
         
     # assigns graph vertex to a Chisel module or a Random Graph object
     # in either case, output width is set
-    def instantiate_vertex(self,vertex):
+    def instantiate_vertex(self, vertex):
         seed()
         rand_val = randint(0, 3*self.hierarchy_level) #always (unless there's an in width constraint), 1/4, 1/7, 1/10 chance
-        in_w,out_w = get_vertex_io_width(vertex)
+        in_width = vertex["unit"].i
         if Hierarchical:
-            if rand_val > 0 or self.hierarchy_level > 3 or in_w < 12: # NOT a subgraph
-                # vertex["unit"] = Compute(i=vertex["unit"].i,o=0, type=UnitType(randint(2, MaxTypeNum)))
+            if rand_val > 0 or self.hierarchy_level > 3 or in_width < 12: # NOT a subgraph
                 module = assign_chisel_module(vertex)
                 vertex["unit"] = Compute(i=vertex["unit"].i, o=vertex["unit"].o, type=UnitType(module))
             else : # vertex IS a subgraph
@@ -185,57 +183,15 @@ class RandomGraph(Unit):
                 vertex["shape"] = "rectangle"
                 vertex["chisel"] = {"name":"RandomHardware"} 
 
-                next_N = min(math.floor(math.log(in_w,2)), in_w/3)
-                vertex["unit"].build_graph(N=next_N, IN_W=in_w, OUT_W=out_w)
-                message("Building subgraph for vertex size {} from width {}".format(next_N,in_w))
-
-                # TODO: maybe wrap this chisel dict in assign_chisel_module?
+                # TODO: justify heuristic
+                # next_N = min(math.floor(math.log(in_width,2)), in_width/2)
+                next_N  = in_width // 5 # in_width 50 -> 10 vertices
+                vertex["unit"].build_graph(N=next_N, IN_W=in_width)
+                message("Building subgraph for vertex size {} from width {}".format(next_N,in_width))
         else: # not Hierarchical
             module = assign_chisel_module(vertex)
-            vertex["unit"] = Compute(i=vertex["unit"].i, o=vertex["unit"].o, type=UnitType(module))
-            
+            vertex["unit"] = Compute(i=vertex["unit"].i, o=vertex["unit"].o, type=UnitType(module))            
     
     def save_graph_pdf(self):
         layout = self.g.layout("fr")
         igraph.plot(self.g, "/home/ubuntu/random_graph_{}_{}.pdf".format(self.hierarchy_level, self.level_id), layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
-
-## EXAMPLE USAGE
-
-rg = RandomGraph(L=0)
-rg.build_graph(N=30, IN_W = 600)
-write_random_graph(rg)
-
-
-
-
-    # def attach_memory_unit(self):
-    #     while True:
-    #         m = randint(0,len(self.g.vs)-1)
-    #         vertex_read = self.g.vs[m]
-    #         if not vertex_read["unit"].connected_to_mem:
-    #             break
-    #     while True:
-    #         m = randint(0,len(self.g.vs)-1)
-    #         vertex_write = self.g.vs[m]
-    #         if not vertex_write["unit"].connected_to_mem:
-    #             break
-    #     g = self.g
-    #     g.add_vertex()
-    #     memory_vertex = g.vs[len(g.vs)-1]
-    #     datawidth = min(vertex_read["unit"].i, vertex_write["unit"].o)
-    #     addrwidth = min(randint(1,10), vertex_read["unit"].o, vertex_write["unit"].o)
-    #     memory_vertex["unit"] = Memory(datawidth=datawidth,addrwidth=addrwidth)
-    #     memory_vertex["label"] = "\n\n\n{a},{d}".format(d=datawidth,a=addrwidth)
-
-    #     #TODO: attach MemoryChannel objects to each edge
-    #     g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory (addr)
-    #     g.add_edges([(memory_vertex.index,vertex_read.index)])  # vertex_read   <-- memory (data)
-    #     g.add_edges([(vertex_write.index,memory_vertex.index)]) # vertex_write  --> memory (data+addr)
-    #     for new_edge in g.es[(len(g.es)-3):(len(g.es))]:
-    #         new_edge["color"] = blue
-
-    #     vertex_read["unit"].i += memory_vertex["unit"].o
-    #     memory_vertex["shape"] = "rectangle"
-    #     memory_vertex["color"] = blue
-    #     vertex_read["unit"].connected_to_mem = True
-    #     vertex_write["unit"].connected_to_mem = True

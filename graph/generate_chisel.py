@@ -113,22 +113,22 @@ def write_vertices_to_modules(unit, pathname):
     to_write += "\n"
 
     # now connect the modules to I/O or internal wires
-    to_write += io_input_to_vertices(inputs)
+    to_write += io_input_to_vertices(inputs, unit.get_input_width())
     to_write += io_vertices_to_output(outputs)
     if (len(g.vs))<2 : return to_write
 
     for vertex in non_io_vertices:
         #change according to declared unit type from above
-        idx = vertex.index
+        # idx = vertex.index
         to_write += connect_in_wires(vertex)
         to_write += connect_out_wires(vertex)
     for vertex in inputs:
         #change according to declared unit type from above
-        idx = vertex.index
+        # idx = vertex.index
         to_write += connect_out_wires(vertex)
     for vertex in outputs:
         #change according to declared unit type from above
-        idx = vertex.index
+        # idx = vertex.index
         to_write += connect_in_wires(vertex)
     return to_write
 
@@ -151,22 +151,22 @@ def connect_in_wires(vertex):
 # use for I/O input vertices (green input nodes)
 # divide top input wire (io.in) to each input for input vertex (green) according to channel width (Unit.i)
 # @params: list of input vertices TODO: take list of unit types  
-def io_input_to_vertices(inputs_list):
+def io_input_to_vertices(inputs_list, total_width):
     to_write=""
-    counter=0
     for vertex in inputs_list:
         idx = vertex.index
-        if vertex["unit"].type.value == 0 :
-            if vertex["unit"].in_wire_width  == 0:
-                width = vertex["unit"].out_wire_width 
-            else:
-                width = vertex["unit"].in_wire_width 
-        else:
-            width = vertex["unit"].i
+        width = vertex["unit"].i
         module_name = get_chisel_module_name(vertex)
         # to_write += "  {m}_{vidx:03}.io.in \t:= top_in({e},{s})\n".format(m=module_name, vidx=idx, s=counter, e=counter+width-1)
-        to_write += "  {m}_{vidx:03}.io.in \t:= io.in({e},{s})\n".format(m=module_name, vidx=idx, s=counter, e=counter+width-1)
-        counter += width
+        if total_width <= width: 
+            to_write += "  {m}_{vidx:03}.io.in \t:= io.in\n".format(m=module_name, vidx=idx)
+        else:
+            #For now, choose top N or bottom N bits
+            if randint(0,1) :
+                to_write += "  {m}_{vidx:03}.io.in \t:= io.in({e},{s})\n".format(m=module_name, vidx=idx, s=0, e=width-1)
+            else :
+                to_write += "  {m}_{vidx:03}.io.in \t:= io.in({e},{s})\n".format(m=module_name, vidx=idx, s=total_width-width, e=total_width-1)
+        # counter += width
     return to_write
 
 # use for NON-IO vertices + I/O Input vertices (green)
@@ -174,14 +174,18 @@ def io_input_to_vertices(inputs_list):
 # @params: vertex, module_name (unit type)
 def connect_out_wires(vertex):
     to_write=""
-    counter=0
+    # counter=0
     module_name = get_chisel_module_name(vertex)
-    # module_name= ChiselModuleNames(vertex["unit"].type.value).name
+    total_width = vertex["unit"].o
     for edge in vertex.out_edges():
         width = edge["unit"].width
-        to_write += "  wire_{e_idx:03} \t :=  {m}_{vidx:03}.io.out({e},{s})\n".format(e_idx=edge.index, m=module_name, 
-            vidx=vertex.index, s=counter, e=counter+width-1)
-        counter += width
+        if total_width == width: 
+            to_write += "  wire_{e_idx:03} \t :=  {m}_{vidx:03}.io.out\n".format(e_idx=edge.index, m=module_name, vidx=vertex.index)
+        else:
+            start = randint(0,1) * (total_width // 2)
+            to_write += "  wire_{e_idx:03} \t :=  {m}_{vidx:03}.io.out({e},{s})\n".format(e_idx=edge.index, m=module_name, 
+                vidx=vertex.index, s=start, e=start+width-1)
+        # counter += width
     return to_write
 
 # use for I/O Output vertices (red)

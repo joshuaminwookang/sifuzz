@@ -2,7 +2,7 @@
 *.log
 *.f
 *.anno.json
-graph/__pycache__
+graph/__pycache__/*.pyc
 target
 project
 src/main/scala/RandomHardware*.scala
