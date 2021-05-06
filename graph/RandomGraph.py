@@ -185,7 +185,7 @@ class RandomGraph(Unit):
                 vertex["shape"] = "rectangle"
                 vertex["chisel"] = {"name":"RandomHardware"} 
 
-                next_N = min(math.floor(math.log(in_w,2)), in_w/2)
+                next_N = min(math.floor(math.log(in_w,2)), in_w/3)
                 vertex["unit"].build_graph(N=next_N, IN_W=in_w, OUT_W=out_w)
                 message("Building subgraph for vertex size {} from width {}".format(next_N,in_w))
 
@@ -202,7 +202,7 @@ class RandomGraph(Unit):
 ## EXAMPLE USAGE
 
 rg = RandomGraph(L=0)
-rg.build_graph(N=20, IN_W = 400)
+rg.build_graph(N=30, IN_W = 600)
 write_random_graph(rg)
 
 

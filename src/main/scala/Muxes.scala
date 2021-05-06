@@ -57,3 +57,52 @@ class Mux8(val n:Int) extends Module {
   .elsewhen(sel === "b001".U)  { io.out := in1 }
   .otherwise              { io.out := in0 }
 }
+
+class ReduceAndMux(val n:Int, val b:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt((2*n+b).W))
+    val out  = Output(UInt(n.W))
+  })
+    val IN1        = io.in( 2*n+b-1 , n+b )
+    val IN2        = io.in( n+b-1   , b   )
+    val SEL        = io.in( b-1     , 0   )
+    
+    io.out := Mux(SEL.andR, IN1, IN2)
+}
+
+class ReduceOrMux(val n:Int, val b:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt((2*n+b).W))
+    val out  = Output(UInt(n.W))
+  })
+    val IN1        = io.in( 2*n+b-1 , n+b )
+    val IN2        = io.in( n+b-1   , b   )
+    val SEL        = io.in( b-1     , 0   )
+    
+    io.out := Mux(SEL.orR, IN1, IN2)
+}
+
+class ReduceXorMux(val n:Int, val b:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt((2*n+b).W))
+    val out  = Output(UInt(n.W))
+  })
+    val IN1        = io.in( 2*n+b-1 , n+b )
+    val IN2        = io.in( n+b-1   , b   )
+    val SEL        = io.in( b-1     , 0   )
+    
+    io.out := Mux(SEL.xorR, IN1, IN2)
+}
+
+class CompareMux(val n:Int, val b:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt((2*n+2*b).W))
+    val out  = Output(UInt(n.W))
+  })
+    val IN1        = io.in( 2*n+2*b-1   , n+b )
+    val IN2        = io.in( n+2*b-1     , 2*b )
+    val SEL1       = io.in( 2*b-1       , b   )
+    val SEL2       = io.in( b-1         , 0   )
+     
+    io.out := Mux(SEl1 >= SEL2, IN1, IN2)
+}

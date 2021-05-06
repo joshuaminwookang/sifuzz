@@ -3,7 +3,6 @@ import igraph, csv, math
 from Units import *
 from sympy import symbols, solve, parse_expr, log
 
-
 chisel_list_dict = []
 with open('ChiselModules.csv', mode='r', encoding='utf-8-sig', newline='') as csvfile:
     chisels_reader = csv.DictReader(csvfile)
@@ -37,44 +36,46 @@ len_chisel_list_same_io_odd = len(chisel_list_same_io_odd)
 '''
 def assign_chisel_module(vertex):
     in_width = vertex["unit"].i
+    assert(in_width > 0)
     # Loop until we find appropriate module
     while(True):
-
-        # Pick a Chisel module randomly from entire pool of possible modules
         idx_chisel = 0
         chisel_dict = []
 
         # Check input width's parity and fanin to fanout ratio 
         if in_width % 2 == 0 :
-            if in_width < 3 :
+            if in_width < 16 :
                 idx_chisel = randint(0,len_chisel_list_same_io_even-1)
                 chisel_dict = chisel_list_same_io_even[idx_chisel].copy() # this module's dictionary
             else:
                 idx_chisel = randint(0,len_chisel_list_even-1)
                 chisel_dict = chisel_list_even[idx_chisel].copy() # this module's dictionary
         else :
-            if in_width < 3 :
+            if in_width < 16 :
                 idx_chisel = randint(0,len_chisel_list_same_io_odd-1)
                 chisel_dict = chisel_list_same_io_odd[idx_chisel].copy() # this module's dictionary
             else:
                 idx_chisel = randint(0,len_chisel_list_odd-1)
                 chisel_dict = chisel_list_odd[idx_chisel].copy() # this module's dictionary
-        # check for too big RFs
         
-        # Two variables decidiing I/O width of given module
-        # For modules that use extra param 'a', choose a random value < in_width/3
+        # Variables decidiing I/O width of given module
+        # For modules that use extra param 'a', choose a to be log2(n)
+        # For moduels that use extra param 'b', choose random value between 0 and 6
         n = symbols('n')
-        seed()
         a = math.floor(log(in_width,2)) -2 + randint(0,3) # Guess: a = log (n), where n+2a == in_width
+        b = randint(1,6) # Just random width
 
         # Evaluate value of n 
         in_expr = chisel_dict["in_expr"]
         out_expr = chisel_dict["out_expr"]
         sols = eval("solve({} - {}, n)".format(in_expr, in_width))
         n = int(sols[0])
+        b = in_width - 2*n
 
         # final check if n is positive integer
         if (int(sols[0]) < vertex.outdegree()): continue
+
+        assert(int(sols[0]) >= vertex.outdegree())
         if chisel_dict["name"] == "RegFile2R1W" and n > 128: continue
 
         for var in chisel_dict["vars"]:
