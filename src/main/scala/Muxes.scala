@@ -58,7 +58,7 @@ class Mux8(val n:Int) extends Module {
   .otherwise              { io.out := in0 }
 }
 
-class NMux (val)
+// class NMux (val)
 class ReduceAndMux(val n:Int, val b:Int) extends Module {
   val io = IO(new Bundle {
     val in  = Input(UInt((2*n+2*b).W))
