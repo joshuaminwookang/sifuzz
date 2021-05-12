@@ -3,7 +3,9 @@ package randomhardware
 
 import chisel3._
 import chisel3.util._
+import chisel3.assert
 import scala.util.Random
+import scala.math
 
 // TODO: There must be a more parameterizable way to instatiate all of these
 class Mux2(val n:Int) extends Module {
@@ -57,6 +59,40 @@ class Mux8(val n:Int) extends Module {
   .elsewhen(sel === "b001".U)  { io.out := in1 }
   .otherwise              { io.out := in0 }
 }
+
+// @params: n is the datawidth; this creates a 2^b-to-1 Mux
+// constraint: n >= 2^b
+class MuxPowerOf2(val n:Int, val b:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt(( (1 << b) * n + b).W))
+    val out  = Output(UInt(n.W))
+  })
+  val numCases = 1 << b
+  val ioInWidth = numCases * n + b
+  val index = io.in(ioInWidth-1, ioInWidth - 1 - b)
+
+  // val inputs_vector = Vec(numCases, UInt(n.W))
+  val inputs_vector = for (i <- 0 until numCases) yield {
+       val input = io.in(i*n + n-1, i*n)
+       input
+  }
+  val cases = inputs_vector.zipWithIndex.map{
+    case (value, index) => value -> inputs_vector(index)
+  }
+  io.out :=  MuxLookup(index, inputs_vector(0), cases)
+}
+
+// @params: n = 2^a
+class ByteSelector(val n:Int, val a:Int)  extends Module {
+  val io = IO(new Bundle {
+    val in     = Input(UInt((8*n+a).W))
+    val out    = Output(UInt(8.W))
+  })
+  val mux_s = Module(new MuxPowerOf2(n=8, b=a))
+  mux_s.io.in := io.in
+  io.out := mux_s.io.out
+}
+
 
 // class NMux (val)
 class ReduceAndMux(val n:Int, val b:Int) extends Module {

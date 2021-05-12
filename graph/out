@@ -1,0 +1,38 @@
+> Random DAG created!
+> Random DAG created!
+Module Name: Div N=14 FROM I: 28 TO O: 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 5 from width 28
+> Random DAG created!
+Module Name: ShiftRegister N=14 FROM I: 14 TO O: 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 2 from width 14
+> Random DAG created!
+Module Name: Reg N=14 FROM I: 14 TO O: 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 2 from width 14
+> Random DAG created!
+Module Name: Mul N=7 FROM I: 14 TO O: 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 2 from width 14
+> Random DAG created!
+> Random DAG created!
+Module Name: Reg N=14 FROM I: 14 TO O: 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 2 from width 14
+> Widths assigned to all channels.
+> Input (green) and Output (red) Channel objects added.
+> Random graph constructed!
+> Building subgraph for vertex size 2 from width 14
+> Random DAG created!
+Module Name: ByteSelector N=26 FROM I: 28 TO O: 26

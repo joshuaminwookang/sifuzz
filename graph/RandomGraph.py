@@ -91,7 +91,7 @@ class RandomGraph(Unit):
         remaining_inputs = len(self.inputs)
         for input in self.inputs:
             mean_in_width = remaining_in_width // remaining_inputs
-            assert(mean_in_width >= 4)
+            # assert(mean_in_width >= 4)
 
             # Heuristic: roughly distribute input widths equally across all input vertices
             in_width = max(4, randint(mean_in_width//4-1, mean_in_width//4+2) * 4) if remaining_inputs > 1 else remaining_in_width

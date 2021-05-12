@@ -112,12 +112,3 @@ class SignExtendDouble(val n:Int) extends Module {
     io.out := Cat(Fill(n,io.in(n-1)), io.in)
 }
 
-class ByteSelector(val n:Int, val a:Int)  extends Module {
-  val io = IO(new Bundle {
-    val in     = Input(UInt((n+a).W))
-    val out    = Output(UInt(8.W))
-  })
-  val s = 1<< (a-1)
-  io.out := 0.U(8.W)
-  io.out := io.in(a + s + 7, a + s)
-}
