@@ -50,6 +50,27 @@ class RegFile2R1W(val n:Int, val a:Int) extends Module {
   io.out := Cat(R1,R2)
 }
 
+class RegFile1R1W(val n:Int, val a:Int) extends Module {
+  val io = IO(new Bundle {
+    val in  = Input(UInt((n+a).W))
+    val out  = Output(UInt(n.W))
+  })
+  
+  val R1_SEL        = io.in( n+a-1  , n   )
+  val W_DATA        = io.in( n-1    , 0   )
+
+  val registers = Reg(Vec(1 << a, UInt(n.W)))
+
+  // for now, always write data (bc LD signal might be always low in our graph)
+  registers(R1_SEL) := W_DATA
+
+  // Set the output to be whatever was selected.
+  val R1 = registers(R1_SEL)
+
+  io.out := R1
+}
+
+
 class ResetShiftRegister(val n:Int) extends Module {
   val io = IO(new Bundle {
     val in    = Input(UInt((n+1).W))

@@ -8,4 +8,4 @@ cd ~
 rm *.pdf
 
 cd $RDIR
-python3.7 main.py
+python3 main.py
