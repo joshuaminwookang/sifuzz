@@ -52,7 +52,7 @@ def assign_chisel_module(vertex):
         Randomly pick module, with certain restrictions
         '''
         if in_width == 0 : 
-            chisel_dict = {"name": "LFSR", "type": "other", "vars":["n", "b"], "in_expr":"n", "out_expr": "4*b"}
+            chisel_dict = {"name": "LFSR", "type": "other", "vars":["n", "b"], "in_expr":"n-4*b", "out_expr": "n"}
         else: 
             if in_width % 2 == 0 :
                 if in_width < 8 :
