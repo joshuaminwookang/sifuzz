@@ -19,9 +19,9 @@ chisel_list_io_expanding_even = list(filter(lambda x: x["in_parity"] == "e" or x
 chisel_list_io_expanding_odd  = list(filter(lambda x: x["in_parity"] == "o" or x["in_parity"] == "x" , chisel_list_io_expanding))
 chisel_list_io_shrinking = list(filter(lambda x: x["fanin2out"] == "1", chisel_list_dict))
 
-chisel_list_compute = list(filter(lambda x: x["type"] == "c", chisel_list_io_shrinking))
-chisel_list_mux = list(filter(lambda x: x["type"] == "mx", chisel_list_io_shrinking))
-chisel_list_memory = list(filter(lambda x: x["type"] == "m", chisel_list_io_shrinking))
+chisel_list_compute = list(filter(lambda x: x["type"] == "c", chisel_list_dict))
+chisel_list_mux = list(filter(lambda x: x["type"] == "mx", chisel_list_dict))
+chisel_list_memory = list(filter(lambda x: x["type"] == "m", chisel_list_dict))
 
 chisel_list_compute_even = list(filter(lambda x: x["in_parity"] == "e" or x["in_parity"] == "x", chisel_list_compute))
 chisel_list_mux_even = list(filter(lambda x: x["in_parity"] == "e" or x["in_parity"] == "x", chisel_list_mux))
@@ -79,9 +79,12 @@ def assign_chisel_module(vertex):
         print("Module Name: {} FROM I: {}".format( chisel_dict["name"],in_width))
 
         n = symbols('n')
+        a = 0; b = 0
         if "a" in chisel_dict["vars"]: 
             a = math.floor(in_width / 6) + randint(0,2) # Guess: a = log (n), where n+2a == in_width
-        b = randint(1,5) # Just random width
+        if "b" in chisel_dict["vars"]: 
+            if in_width <= 8 : b = 1
+            else : b = randint(1, in_width//4) # Just random width
 
         # Evaluate value of n 
 
@@ -98,6 +101,7 @@ def assign_chisel_module(vertex):
         #     print("check 1 {}".format(vertex.outdegree())); continue
         if chisel_dict["name"] == "RegFile2R1W" and n > 128: print("check 2"); continue
         if "a" in chisel_dict["vars"]:
+            if n < 1 : continue
             if a != math.ceil(log(n,2)) : continue
 
         for var in chisel_dict["vars"]:

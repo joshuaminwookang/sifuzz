@@ -17,11 +17,11 @@ ReduceAndMux,mx,n;b,2*n+2*b,n,e,1
 ReduceOrMux,mx,n;b,2*n+2*b,n,e,1 
 ReduceXorMux,mx,n;b,2*n+2*b,n,e,1
 CompareMux,mx,n;b,2*n+2*b,n,e,1
-ByteSelector,mx,n;a,n+a,n,x,1
-Reg,m,n,n,n,x,1
-RegE,m,n,n+1,n,x,1
+ByteSelector,mx,n;a,8*n+a,8,x,1
+Reg,m,n,n,n,x,0
+RegE,m,n,n+1,n,x,0
 RegFile1R1W,m,n;a,n+a,n,x,1
 RegFile2R1W,m,n;a,n+2*a,2*n,x,1
 ResetShiftRegister,m,n,n+1,n,x,1
-ShiftRegister,m,n,n,n,x,1
+ShiftRegister,m,n,n,n,x,0
 Stack,m,n;b,n+3,n,x,1

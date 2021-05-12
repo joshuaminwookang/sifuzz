@@ -37,9 +37,10 @@ class RandomGraph(Unit):
 
     def build_graph(self, N=50, IN_W=0, OUT_W=0):
         # List of vertices that are themselves subgraphs
+        seed()
         subgraph_vertices = []
-        self.N = N
-        self.i = IN_W
+        self.N = randint(25,35)
+        self.i = 10*randint(8,12)
 
         ''' generate random DAG
             loop until DAG successfully generated (always happens on first try for me)
@@ -47,7 +48,7 @@ class RandomGraph(Unit):
         '''
         while True:
             # randomly choose connectivity
-            weight_function = 0.01 * randint(3,7)
+            weight_function = 0.01 * randint(3,6)
             g = igraph.Graph.Erdos_Renyi(n=N, p=weight_function,directed=True, loops=False)
             extra_edges = g.feedback_arc_set()
             g.delete_edges(extra_edges)
