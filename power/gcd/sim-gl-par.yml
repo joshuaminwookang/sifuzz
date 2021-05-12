@@ -10,7 +10,7 @@ sim.inputs:
   timing_annotated: true
   saif:
     mode: "full"
-  timescale: "1ns/10ps"
+  timescale: "2ns/10ps"
   options:
     - "-notice"
     - "-line"
@@ -32,3 +32,7 @@ sim.inputs:
 power.inputs:
   database: "build/par-rundir/gcd_FINAL"
   tb_name: "gcd_testbench"
+  tb_dut: "gcd"
+  waveforms: ["build/sim-rundir/gcd.vcd"]
+  start_times: ["15"]
+  end_times: ["200"]

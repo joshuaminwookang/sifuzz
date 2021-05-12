@@ -65,7 +65,7 @@ sim.vcs.version: "P-2019.06"
 
 # Voltus options
 vlsi.core.power_tool: "voltus"
-vlsi.core.power_tool_path: ["/home/ff/eecs151/hammer-cadence-plugins/power"]
+vlsi.core.power_tool_path: ["/scratch/nayiri/hammer-cadence-plugins/power"]
 vlsi.core.power_tool_path_meta: "append"
 power.voltus.version: "181"
 
@@ -95,12 +95,6 @@ par.generate_power_straps_options:
     power_utilization: 0.05
     power_utilization_M8: 1.0
     power_utilization_M9: 1.0
-
-# Specify clock signals
-# ASAP7 bug: period value should actually be in ps
-vlsi.inputs.clocks: [
-  {name: "clock", period: "1000ns", uncertainty: "0.1ns"}
-]
 
 # Placement Constraints
 vlsi.inputs.placement_constraints:

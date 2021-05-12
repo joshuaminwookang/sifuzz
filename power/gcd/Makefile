@@ -109,7 +109,7 @@ power: $(HAMMER_D_MK)
 
 .PHONY: power-par
 power-par: $(HAMMER_D_MK) $(INPUT_PWR_SIM_GL_DB) $(INPUT_PWR_PAR_DB)
-	$(HAMMER_EXEC) -e $(ENV_YML) -p $(TECH_CONF) -p $(INPUT_PWR_SIM_GL_DB) -p $(INPUT_PWR_PAR_DB) --obj_dir $(OBJ_DIR) power
+	$(HAMMER_EXEC) -e $(ENV_YML) -p $(TECH_CONF) -p $(SIM_GL_PAR_CONF) -p $(INPUT_PWR_SIM_GL_DB) -p $(INPUT_PWR_PAR_DB) --obj_dir $(OBJ_DIR) power
 
 #########################################################################################
 # Synthesis

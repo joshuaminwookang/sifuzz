@@ -1,19 +1,16 @@
-# Post-Synthesis Gate-Level Simulation Variables
+# RTL Simulation Variables
 sim.inputs:
   input_files:
+    - "src/RandomHardware.v"
     - "src/RandomHardware_tb.v"
-  input_files_meta: append
-  level: "gl"
-  timing_annotated: true
   timescale: "1ns/10ps"
   options:
     - "-notice"
     - "-line"
-    - "+lint=all"
+    - "+lint=all,noVCDE"
     - "+v2k"
     - "-debug"
-    - "+neg_tchk"
-  top_module: "RandomHardware"
+  top_module: "RandomHardware_tb"
   tb_name: "RandomHardware_tb"
   tb_dut: "dut"
   defines: 

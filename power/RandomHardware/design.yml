@@ -1,11 +1,11 @@
 # Specify Global Variables
-gcd.clockPeriod: &CLK_PERIOD "1ns"
-gcd.verilogSrc: &VERILOG_SRC
+RandomHardware.clockPeriod: &CLK_PERIOD "1ns"
+RandomHardware.verilogSrc: &VERILOG_SRC
   - "src/RandomHardware.v"
 
 # Specify clock signals
 vlsi.inputs.clocks: [
-  {name: "clk", period: *CLK_PERIOD, uncertainty: "0.1ns"}
+  {name: "clock", period: *CLK_PERIOD, uncertainty: "0.1ns"}
 ]
 
 # Synthesis Constraints
@@ -15,7 +15,7 @@ synthesis.inputs:
 
 power.inputs:
   database: "build/par-rundir/RandomHardware_FINAL"
-  tb_name: "gcd_testbench"
+  tb_name: "RandomHardware_tb"
 
 # Placement Constraints
 vlsi.inputs.placement_constraints:
@@ -23,8 +23,8 @@ vlsi.inputs.placement_constraints:
     type: "toplevel"
     x: 0
     y: 0
-    width: 1000
-    height: 1000
+    width: 5000
+    height: 5000
     margins:
       left: 10
       right: 10

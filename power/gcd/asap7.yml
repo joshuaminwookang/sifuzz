@@ -65,7 +65,7 @@ sim.vcs.version: "P-2019.06"
 
 # Voltus options
 vlsi.core.power_tool: "voltus"
-vlsi.core.power_tool_path: ["/home/ff/eecs151/hammer-cadence-plugins/power"]
+vlsi.core.power_tool_path: ["/scratch/nayiri/hammer-cadence-plugins/power"]
 vlsi.core.power_tool_path_meta: "append"
 power.voltus.version: "181"
 
