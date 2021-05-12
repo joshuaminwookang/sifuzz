@@ -1,0 +1,51 @@
+
+
+Working Directory = /tools/scratch/nayiri/randomaccels/power/RandomHardware/build/syn-rundir
+QoS Summary for RandomHardware
+================================================================================
+Metric                          final          
+================================================================================
+Slack (ps):                       -58
+  R2R (ps):                       -58
+  I2R (ps):                  no_value
+  R2O (ps):                  no_value
+  I2O (ps):                  no_value
+  CG  (ps):                       804
+TNS (ps):                         868
+  R2R (ps):                       868
+  I2R (ps):                  no_value
+  R2O (ps):                  no_value
+  I2O (ps):                  no_value
+  CG  (ps):                         0
+Failing Paths:                     21
+Cell Area:                      4,974
+Total Cell Area:                4,974
+Leaf Instances:                 3,080
+Total Instances:                3,080
+Utilization (%):                 0.00
+Tot. Net Length (um):        no_value
+Avg. Net Length (um):        no_value
+Route Overflow H (%):        no_value
+Route Overflow V (%):        no_value
+MBCI(%) (bits/gate) :            0.00
+Norm Cong Hotspot Area:
+  Max Cong:                  no_value
+  Tot Cong:                  no_value
+================================================================================
+CPU  Runtime (h:m:s):        00:01:27
+Real Runtime (h:m:s):        00:01:17
+CPU  Elapsed (h:m:s):        00:01:30
+Real Elapsed (h:m:s):        00:01:17
+Memory (MB):                  1022.94
+================================================================================
+================================================================================
+Flow Settings:
+================================================================================
+Total Runtime (h:m:s): 00:01:17
+Total Memory (MB):     1022.94
+Executable Version:    18.13-s027_1
+================================================================================
+Total Cell Area =  Cell Area + Physical Cell Area
+Total Instances =  Leaf Instances + Physical Instances
+
+

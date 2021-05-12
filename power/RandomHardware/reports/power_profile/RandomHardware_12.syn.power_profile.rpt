@@ -1,0 +1,14 @@
+# plot_data_native -type line -window_title plot_power_profile -xrange 0.0:13.0 -ykey c2 -ykeylabel /RandomHardware:total -title {Power profile of /RandomHardware} -xlabel {simulation time (ns)} -ylabel {power (uW)}
+0.5 437.922578744
+1.5 434.946399714
+2.5 436.83537368
+3.5 456.887635637
+4.5 424.777107368
+5.5 425.635731898
+6.5 426.494356428
+7.5 429.304195267
+8.5 437.035995727
+9.5 428.727590059
+10.5 429.242764777
+11.5 450.993412319
+12.5 451.435110425
