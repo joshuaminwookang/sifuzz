@@ -1,7 +1,7 @@
 # Post-Synthesis Gate-Level Simulation Variables
 sim.inputs:
   input_files:
-    - "src/gcd_testbench.v"
+    - "src/RandomHardware_tb.v"
   input_files_meta: append
   level: "gl"
   timing_annotated: true
@@ -13,8 +13,8 @@ sim.inputs:
     - "+v2k"
     - "-debug"
     - "+neg_tchk"
-  top_module: "gcd"
-  tb_name: "gcd_testbench"
-  tb_dut: "gcd"
+  top_module: "RandomHardware"
+  tb_name: "RandomHardware_tb"
+  tb_dut: "dut"
   defines: 
     - "CLOCK_PERIOD=1.00"

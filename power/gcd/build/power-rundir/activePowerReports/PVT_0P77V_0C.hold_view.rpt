@@ -2,78 +2,78 @@
 *	Voltus Power Analysis - Power Calculator - Version v18.17-s023_1 64-bit (03/05/2020 14:39:22)
 *	Copyright 2007, Cadence Design Systems, Inc.
 *
-* 	Date & Time:	2021-Apr-28 14:55:28 (2021-Apr-28 21:55:28 GMT)
+* 	Date & Time:	2021-May-09 10:12:00 (2021-May-09 17:12:00 GMT)
 *
 *----------------------------------------------------------------------------------------
 *
 *	Design: gcd
 *
 *	Liberty Libraries used: 
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_RVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_LVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_SLVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_SRAM_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_RVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_LVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_SLVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_SRAM_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_RVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_LVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_SLVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_SRAM_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_RVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_LVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_SLVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_SRAM_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_RVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_LVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_SLVT_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_SRAM_FF.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW1024x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x46_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x48_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x128_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x46_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x48_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW32x50_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x128_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x128_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x34_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x16_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x4_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x16_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x4_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x16_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x22_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x39_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x4_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x8_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x16_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x32_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x4_PVT_0P77V_0C.lib
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_RVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_LVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_SLVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SIMPLE_SRAM_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_RVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_LVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_SLVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_AO_SRAM_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_RVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_LVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_SLVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_OA_SRAM_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_RVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_LVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_SLVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_SEQ_SRAM_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_RVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_LVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_SLVT_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/asap7sc7p5t_24_INVBUF_SRAM_FF.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW1024x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x46_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x48_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW128x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x128_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x46_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x48_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW256x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW32x50_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x128_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW512x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x128_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x34_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM1RW64x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x16_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x4_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW128x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x16_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x4_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW16x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x16_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x22_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x39_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x4_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW32x8_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x16_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x32_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x4_PVT_0P77V_0C.lib
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd_FINAL/libs/mmmc/SRAM2RW64x8_PVT_0P77V_0C.lib
 *
 *	Power Domain used: 
 *              Rail:        VDD      Voltage:       0.77 
 *
 *	Parasitic Files used: 
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd.setup.par.spef
-*	        /home/aa/users/cs199-aap/projects/randomaccels/power/gcd/build/par-rundir/gcd.hold.par.spef
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd.setup.par.spef
+*	        /scratch/nayiri/randomaccels/power/gcd/build/par-rundir/gcd.hold.par.spef
 *
 *	DEF Files used: 
-*	        /tmp/ssv_tmpdir_16161_bwHFuJ/eps_out_16161.def.gz
+*	        /tmp/ssv_tmpdir_15895_BVIGI9/eps_out_15895.def.gz
 *
 *       Activity File: N.A.
 *
@@ -100,33 +100,33 @@
 
 Total Power 
 -----------------------------------------------------------------------------------------
-Total Internal Power:        0.08313336 	    6.8968%
-Total Switching Power:       1.11899683 	   92.8325%
-Total Leakage Power:         0.00326290 	    0.2707%
-Total Power:                 1.20539310 
+Total Internal Power:        0.08088737 	    6.7225%
+Total Switching Power:       1.11901372 	   93.0008%
+Total Leakage Power:         0.00332888 	    0.2767%
+Total Power:                 1.20322997 
 -----------------------------------------------------------------------------------------
 
 
 Group                           Internal   Switching     Leakage       Total  Percentage 
                                 Power      Power         Power         Power  (%)        
 -----------------------------------------------------------------------------------------
-Sequential                       0.02914    0.009877   0.0006456     0.03966        3.29 
+Sequential                       0.02848     0.00892   0.0006279     0.03803        3.16 
 Macro                                  0           0           0           0           0 
-IO                                     0           0   1.192e-07   1.192e-07   9.889e-06 
-Combinational                    0.04974       1.104    0.002565       1.156       95.89 
-Clock (Combinational)           0.001143   0.0006442   5.074e-08    0.001787      0.1483 
-Clock (Sequential)              0.003114    0.004911   5.172e-05    0.008077      0.6701 
+IO                                     0           0   1.192e-07   1.192e-07   9.906e-06 
+Combinational                     0.0493       1.105    0.002649       1.157       96.15 
+Clock (Combinational)            0.00081   0.0008805   3.382e-08    0.001691      0.1405 
+Clock (Sequential)              0.002294    0.004286   5.172e-05    0.006632      0.5512 
 -----------------------------------------------------------------------------------------
-Total                            0.08313       1.119    0.003263       1.205         100 
+Total                            0.08089       1.119    0.003329       1.203         100 
 -----------------------------------------------------------------------------------------
 
 
 Clock                           Internal   Switching     Leakage       Total  Percentage 
                                 Power      Power         Power         Power  (%)        
 -----------------------------------------------------------------------------------------
-clk                             0.004257    0.005556   5.177e-05    0.009864      0.8183 
+clk                             0.003104    0.005167   5.176e-05    0.008322      0.6917 
 -----------------------------------------------------------------------------------------
-Total (excluding duplicates)    0.004257    0.005556   5.177e-05    0.009864      0.8183 
+Total (excluding duplicates)    0.003104    0.005167   5.176e-05    0.008322      0.6917 
 -----------------------------------------------------------------------------------------
 
 Clock: clk
@@ -138,15 +138,15 @@ Clock Static Probability:  0.5000
 Rail                  Voltage   Internal   Switching     Leakage       Total  Percentage 
                                 Power      Power         Power         Power  (%)        
 -----------------------------------------------------------------------------------------
-VDD                      0.77    0.08313       1.119    0.003263       1.205         100 
+VDD                      0.77    0.08089       1.119    0.003329       1.203         100 
 
 
 -----------------------------------------------------------------------------------------
 *	Power Distribution Summary: 
-*                Highest Average Power:     FE_OFC62_operands_rdy (BUFx24_ASAP7_75t_SL):          0.06094 
-*                Highest Leakage Power: FE_OFC61_result_bits_data_4 (BUFx24_ASAP7_75t_SL):        9.234e-05 
-*          Total Cap:      1.87191e-11 F
-*          Total instances in design:   364
+*                Highest Average Power: FE_OFC11_result_bits_data_6 (BUFx24_ASAP7_75t_SL):          0.06079 
+*                Highest Leakage Power: FE_OFC17_result_bits_data_0 (BUFx24_ASAP7_75t_SL):        9.234e-05 
+*          Total Cap:      1.86996e-11 F
+*          Total instances in design:   393
 *          Total instances in design with no power:     0
 *          Total instances in design with no activity:     0
 *          Total Fillers and Decap:     0
