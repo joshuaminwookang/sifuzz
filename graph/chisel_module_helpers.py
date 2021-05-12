@@ -43,6 +43,7 @@ len_chisel_list_io_expanding_odd = len(chisel_list_io_expanding_odd)
 '''
 def assign_chisel_module(vertex):
     in_width = vertex["unit"].i
+    assert(in_width < 1024)
     # Loop until we find appropriate module
     while(True):
         idx_chisel = 0
