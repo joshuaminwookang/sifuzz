@@ -1,0 +1,17 @@
+# RTL Simulation Variables
+sim.inputs:
+  input_files:
+    - "src/RandomHardware.v"
+    - "src/RandomHardware_tb.v"
+  timescale: "1ns/10ps"
+  options:
+    - "-notice"
+    - "-line"
+    - "+lint=all,noVCDE"
+    - "+v2k"
+    - "-debug"
+  top_module: "RandomHardware_tb"
+  tb_name: "RandomHardware_tb"
+  tb_dut: "dut"
+  defines: 
+    - "CLOCK_PERIOD=1.00"
