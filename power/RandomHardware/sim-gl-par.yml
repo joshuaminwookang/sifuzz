@@ -1,0 +1,36 @@
+# Post-PAR Gate-Level Simulation Variables
+sim.inputs:
+  input_files:
+    - "src/RandomHardware.v"
+    - "src/RandomHardware_tb.v"
+  input_files_meta: append
+  level: "gl"
+  timing_annotated: true
+  saif:
+    mode: "full"
+  timescale: "1ns/10ps"
+  options:
+    - "-notice"
+    - "-line"
+    - "+lint=all"
+    - "+v2k"
+    - "-debug"
+    - "+vcs+lic+wait"
+    - "+udpsched"
+    - "+neg_tchk"
+    - "+sdfverbose"
+    - "-negdelay"
+    - "+evalorder"
+  top_module: "RandomHardware"
+  tb_name: "RandomHardware_tb"
+  tb_dut: "RandomHardware"
+  defines: 
+    - "CLOCK_PERIOD=1.00"
+
+power.inputs:
+  database: "build/par-rundir/RandomHardware_FINAL"
+  tb_name: "RandomHardware_tb"
+  tb_dut: "RandomHardware"
+  waveforms: ["build/sim-rundir/RandomHardware.vcd"]
+  start_times: ["0"]
+  end_times: ["36"]

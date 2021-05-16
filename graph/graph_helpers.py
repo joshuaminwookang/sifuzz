@@ -1,9 +1,10 @@
-from random import randint
+from random import randint, seed
 from math import floor
 import igraph
 from Units import *
 from datetime import datetime
 import pathlib
+# from chisel_module_helpers import *
 
 
 red   = (1,.5,.5,1)
@@ -68,7 +69,6 @@ def connect_memory_unit(g, vertex_read, vertex_write):
     g.add_edges([(vertex_read.index,memory_vertex.index)])  # vertex_read   --> memory
     new_edge = g.es[len(g.es)-1]
     set_channel_width(new_edge,memory_vertex["unit"].i)
-    # print("mem in: "+str(memory_vertex["unit"].i))
 
     # add memory channel to compute unit's input
     compute_vertex["unit"].i += memory_vertex["unit"].o
@@ -121,16 +121,21 @@ def attach_memory_unit(g):
 # assume vertex["unit"] is in class Unit with vertex["unit"].o set to a value
 # iterate over vertex's outgoing edges and divide output width evenly among them
 def assign_widths_to_outedges(vertex):
+    seed() # init random seed
     edges = vertex.out_edges()
     num_edges = vertex.outdegree()
+    # print("DISTRIBUTE: {} over {}".format(vertex["unit"].o, num_edges))
     if num_edges > 0:
         out_width = vertex["unit"].o
         out_width_peredge = floor(out_width/num_edges)
-        for idx in range(num_edges-1):
-            set_channel_width(edges[idx],out_width_peredge)
-        # remaining edge gets rest of bits
-        lastedge_width = out_width - out_width_peredge*(num_edges-1)
-        set_channel_width(edges[-1], lastedge_width)
+        for idx in range(num_edges):
+            random_number = randint(0,3) # with 75% chance propagate entire output
+            if random_number == 0 and out_width_peredge > 4 or out_width > 256: 
+                set_channel_width(edges[idx],out_width_peredge)
+                # print("Got: {} ".format(out_width_peredge))
+            else : 
+                set_channel_width(edges[idx],out_width)
+                # print("Got: {} ".format(out_width))
 
 # currently for simplicity, set output = input width
 def scale_output_from_input(vertex):
@@ -139,7 +144,7 @@ def scale_output_from_input(vertex):
     # (perhaps when input width falls below a certain threshold)
     # if (vertex["unit"].i < vertex.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
-    # elif (vertex["unit"].i < 2*vertex.outdegree()):
+    # elif (vertex["unit"].i < 2*verte x.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
     # elif (vertex["unit"].i < 6*vertex.outdegree()):
     #     vertex["unit"].o = 2*vertex["unit"].i
@@ -149,5 +154,3 @@ def scale_output_from_input(vertex):
 def visualize_graph(graph):
     layout = graph.layout("fr")
     igraph.plot(graph,layout=layout,bbox=(1000,1000),margin=50,autocurve=False)
-
-

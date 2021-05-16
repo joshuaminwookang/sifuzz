@@ -2,3 +2,8 @@
 *.log
 *.f
 *.anno.json
+graph/__pycache__
+target
+project
+src/main/scala/RandomHardware*.scala
+power/gcd

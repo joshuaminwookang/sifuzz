@@ -3,6 +3,9 @@
 RDIR=$(pwd)
 cd ../src/main/scala
 rm RandomHardware_*.scala
+
+cd ~
 rm *.pdf
+
 cd $RDIR
-python3.7 RandomGraph.py
+python3 main.py

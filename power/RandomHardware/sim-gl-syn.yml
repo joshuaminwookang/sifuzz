@@ -1,0 +1,20 @@
+# Post-Synthesis Gate-Level Simulation Variables
+sim.inputs:
+  input_files:
+    - "src/RandomHardware_tb.v"
+  input_files_meta: append
+  level: "gl"
+  timing_annotated: true
+  timescale: "1ns/10ps"
+  options:
+    - "-notice"
+    - "-line"
+    - "+lint=all"
+    - "+v2k"
+    - "-debug"
+    - "+neg_tchk"
+  top_module: "RandomHardware"
+  tb_name: "RandomHardware_tb"
+  tb_dut: "dut"
+  defines: 
+    - "CLOCK_PERIOD=1.00"

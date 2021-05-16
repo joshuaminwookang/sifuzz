@@ -1,0 +1,41 @@
+# Specify Global Variables
+RandomHardware.clockPeriod: &CLK_PERIOD "1ns"
+RandomHardware.verilogSrc: &VERILOG_SRC
+  - "src/RandomHardware.v"
+
+# Specify clock signals
+vlsi.inputs.clocks: [
+  {name: "clock", period: *CLK_PERIOD, uncertainty: "0.1ns"}
+]
+
+# Synthesis Constraints
+synthesis.inputs:
+  top_module: "RandomHardware"
+  input_files: *VERILOG_SRC
+
+power.inputs:
+  database: "build/par-rundir/RandomHardware_FINAL"
+  tb_name: "RandomHardware_tb"
+
+# Placement Constraints
+vlsi.inputs.placement_constraints:
+  - path: "RandomHardware"
+    type: "toplevel"
+    x: 0
+    y: 0
+    width: 5000
+    height: 5000
+    margins:
+      left: 10
+      right: 10
+      top: 10
+      bottom: 10
+
+# Pin placement constraints
+vlsi.inputs.pin_mode: generated
+vlsi.inputs.pin.generate_mode: semi_auto
+vlsi.inputs.pin.assignments: [
+  {pins: "*", layers: ["M5", "M7"], side: "bottom"}
+]
+
+

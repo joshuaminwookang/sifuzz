@@ -3,31 +3,31 @@ from enum import Enum
 class UnitType(Enum):
     GRAPH = 0
     COMPUTE = 1
-    INT_ADD = 2
-    INT_AND = 3
-    INT_MUL = 4
-    INT_DIV = 5
-    INT_MOD = 6
-    RED_MUX_AND = 7
-    RED_MUX_OR = 8
-    RED_MUX_XOR = 9
+    # INT_ADD = 2
+    # INT_AND = 3
+    # INT_MUL = 4
+    # INT_DIV = 5
+    # INT_MOD = 6
+    # RED_MUX_AND = 7
+    # RED_MUX_OR = 8
+    # RED_MUX_XOR = 9
 
     # sub-categories of COMPUTE = 2, 3,...,9
-    MEMORY = 10
-    NETWORK = 20
-    CHANNEL = 30
-    MEMORY_CHANNEL = 31
+    MEMORY = 2
+    NETWORK = 3
+    CHANNEL = 4
+    MEMORY_CHANNEL = 5
     
-class ChiselModuleNames(Enum):
-    RandomHardware = 0
-    Add = 2
-    And = 3
-    Mul = 4
-    Div = 5
-    Mod = 6
-    ReduceAndMux = 7
-    ReduceOrMux = 8
-    ReduceXorMux = 9
+# class ChiselModuleNames(Enum):
+#     RandomHardware = 0
+#     Add = 2
+#     And = 3
+#     Mul = 4
+#     Div = 5
+#     Mod = 6
+#     ReduceAndMux = 7
+#     ReduceOrMux = 8
+#     ReduceXorMux = 9
 
 class Unit:
     def __init__(self,i=1,o=1,type=UnitType.COMPUTE):
