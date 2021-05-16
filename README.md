@@ -41,4 +41,4 @@ If you have a question or problem, please file an issue on GitHub.
 To contribute bugfixes or new features, submit a pull request.
 
 # Contributors
-(c) 2021 Josh Kang and Nayiri 
+(c) 2021 Josh Kang and Nayiri Krzysztofowicz
